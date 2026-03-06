@@ -39,7 +39,7 @@ Chest=#FF6B6B · Back=#4FC4CF · Shoulders=#FFD93D · Biceps=#A29BFE · Triceps=
 localStorage keys:
   wa_exercises   → array of { id, name, muscleGroup }
   wa_program     → { Monday: [{exerciseId, targetSets, targetReps}], ... }
-  wa_logs        → array of { id, date (ISO), dayName, exercises: [{exerciseId, targetSets, targetReps, sets: [{weight, reps}]}] }
+  wa_logs        → array of { id, date (ISO), dayName, duration (secs, optional), exercises: [{exerciseId, targetSets, targetReps, sets: [{weight, reps}]}] }
   wa_active      → active workout object (same shape as a log entry, no id/date yet)
   wa_last_backup → ISO timestamp of last export
 ```
@@ -59,6 +59,10 @@ localStorage keys:
 | `SetDots` | Dot indicators — filled lime = done, grey = pending |
 | `ExerciseCard` | Expandable card with inputs, set logging, rest timer, swap |
 | `LineChart` | Custom SVG chart — takes `[{label, value}]` |
+| `RingProgress` | SVG ring showing sets done/total on active workout header |
+| `DayStrip` | M T W T F S S week view with today highlighted |
+| `WorkoutTimer` | Live MM:SS counter tied to `activeWorkout.startTime` |
+| `BackupNudge` | Dismissible banner after 7 days without export |
 | `LimeBtn` | Primary CTA — lime bg, black text |
 | `GhostBtn` | Secondary — transparent, dim border |
 | `MgPill` | Coloured muscle group badge |
@@ -70,6 +74,8 @@ localStorage keys:
 | `S.get/set` | localStorage wrapper with JSON parse/stringify |
 | `getSuggestion(exerciseId, targetReps, logs)` | Returns progressive overload suggestion (+2.5kg if all reps hit) |
 | `calcVolume(sets)` | Sum of weight×reps across sets |
+| `fmtDuration(secs)` | Formats seconds → "47m" or "1h 12m" |
+| `haptic(ms)` | Calls navigator.vibrate — fires on set logged (30ms) |
 | `todayName()` | Returns current day name e.g. "Monday" |
 | `fmtDate(iso)` | Formats "2026-03-04" → "4 Mar" |
 

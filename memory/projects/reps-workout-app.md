@@ -31,6 +31,18 @@ All data stored in `localStorage`. JSON export/import for backup and phone switc
 - [x] SVG icons throughout (no emoji)
 - [x] Muscle group colour system (left border on cards + MgPill)
 - [x] Seed data + importable mock JSON (8 weeks Push/Pull/Legs)
+- [x] PWA — manifest.json, apple-touch-icon, no-cache headers, deployed on GitHub Pages (mrhos/reps)
+- [x] Ring progress indicator on active workout header
+- [x] Day strip (M T W T F S S) on Today screen
+- [x] Pill filters on Progress charts tab
+- [x] Celebratory completion screen (lime, stats summary)
+- [x] Weekly backup nudge banner (dismissible, after 7 days)
+- [x] Haptic feedback — navigator.vibrate(30) on every set logged
+- [x] Workout duration timer — live MM:SS in active header; saved to log; shown on completion screen
+- [x] Empty state illustrations — Progress, Program day, Library search (custom SVG)
+- [x] Session history — Progress → History tab lists all sessions newest-first
+- [x] Edit past workout — tap any session to view sets, edit weight/reps, add/remove sets
+- [x] Delete workout — with confirmation; deleting today resets Today tab to Ready to Start
 
 ## Architecture Decisions
 - **No build tools** — CDN React 18 + Babel standalone. Tradeoff: slower initial parse, but zero setup friction.
