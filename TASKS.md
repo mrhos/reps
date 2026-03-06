@@ -51,7 +51,7 @@ Tasks are grouped by theme. Move to **Done** when shipped.
 - [ ] **kg / lbs toggle** — unit preference with auto-conversion throughout
 - [x] **Auto-backup reminder** — nudge banner on Today screen after 7 days without export; dismissible, links to Settings
 - [ ] **iCloud / Google Drive export** — native share sheet on iOS/Android for backup file
-- [ ] **Edit past workout** — tap a session in Progress recent list to view and edit logged sets
+- [x] **Edit past workout** — tap any session in Progress → History to view, edit sets, or delete
 
 ---
 
