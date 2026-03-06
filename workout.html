@@ -565,7 +565,7 @@ function SwapModal({ exerciseId, exercises, usedIds, onSwap, onClose }) {
 function ExerciseCard({ wex, exercise, logs, onLogSet, onSwap, isExpanded, onToggle }) {
   const suggestion = useMemo(() => getSuggestion(wex.exerciseId, wex.targetReps, logs), [wex.exerciseId, wex.targetReps, logs]);
   const [weight, setWeight] = useState(() => suggestion ? fmt(suggestion.weight) : '');
-  const [reps,   setReps]   = useState('');
+  const [reps,   setReps]   = useState(() => String(wex.targetReps || ''));
   const [flash,  setFlash]  = useState(false);
 
   useEffect(() => {
