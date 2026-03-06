@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Reps" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0A0A0A" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <title>Reps</title>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #0A0A0A; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+    }
+    button { cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; }
+    input, select { outline: none; color: #fff; }
+    select option { background: #1A1A1A; }
+    ::-webkit-scrollbar { display: none; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number] { -moz-appearance: textfield; }
+
+    /* Lime focus ring */
+    input:focus { border-color: #C8FF00 !important; }
+
+    /* Active press states */
+    button:active { opacity: 0.82; transform: scale(0.98); }
+
+    /* Smooth transitions on cards */
+    .ex-card { transition: border-color 0.2s; }
+
+    /* Chip scrollbar */
+    .chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+    .chip-row::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+// ─── DESIGN TOKENS ────────────────────────────────────────────────────────────
+
+const T = {
+  bg:      '#0A0A0A',
+  card:    '#141414',
+  card2:   '#1C1C1C',
+  border:  '#242424',
+  border2: '#2E2E2E',
+  lime:    '#C8FF00',
+  limeDim: 'rgba(200,255,0,0.12)',
+  red:     '#FF3B30',
+  redDim:  'rgba(255,59,48,0.12)',
+  white:   '#FFFFFF',
+  dim:     '#777',
+  muted:   '#3A3A3A',
+  text:    '#FFFFFF',
+};
+
+// Per muscle-group accent colours (left card border)
+const MG = {
+  'Chest':      '#FF6B6B',
+  'Back':       '#4FC4CF',
+  'Shoulders':  '#FFD93D',
+  'Biceps':     '#A29BFE',
+  'Triceps':    '#818CF8',
+  'Quads':      '#F472B6',
+  'Hamstrings': '#FB923C',
+  'Glutes':     '#F97316',
+  'Calves':     '#34D399',
+  'Core':       '#60A5FA',
+  'Full Body':  '#94A3B8',
+};
+const mgColor = g => MG[g] || '#555';
+
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+
+const DAYS          = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const MUSCLE_GROUPS = ['Chest','Back','Shoulders','Biceps','Triceps','Quads','Hamstrings','Glutes','Calves','Core','Full Body'];
+
+const SEED_EXERCISES = [
+  { id:'e1',  name:'Bench Press',       muscleGroup:'Chest'      },
+  { id:'e2',  name:'Incline DB Press',  muscleGroup:'Chest'      },
+  { id:'e3',  name:'Cable Fly',         muscleGroup:'Chest'      },
+  { id:'e4',  name:'Push-ups',          muscleGroup:'Chest'      },
+  { id:'e5',  name:'Overhead Press',    muscleGroup:'Shoulders'  },
+  { id:'e6',  name:'Lateral Raises',    muscleGroup:'Shoulders'  },
+  { id:'e7',  name:'Front Raises',      muscleGroup:'Shoulders'  },
+  { id:'e8',  name:'Face Pulls',        muscleGroup:'Shoulders'  },
+  { id:'e9',  name:'Tricep Pushdown',   muscleGroup:'Triceps'    },
+  { id:'e10', name:'Skull Crushers',    muscleGroup:'Triceps'    },
+  { id:'e11', name:'Dips',              muscleGroup:'Triceps'    },
+  { id:'e12', name:'Pull-ups',          muscleGroup:'Back'       },
+  { id:'e13', name:'Barbell Row',       muscleGroup:'Back'       },
+  { id:'e14', name:'Cable Row',         muscleGroup:'Back'       },
+  { id:'e15', name:'Lat Pulldown',      muscleGroup:'Back'       },
+  { id:'e16', name:'Deadlift',          muscleGroup:'Back'       },
+  { id:'e17', name:'Bicep Curl',        muscleGroup:'Biceps'     },
+  { id:'e18', name:'Hammer Curl',       muscleGroup:'Biceps'     },
+  { id:'e19', name:'Squat',             muscleGroup:'Quads'      },
+  { id:'e20', name:'Leg Press',         muscleGroup:'Quads'      },
+  { id:'e21', name:'Lunges',            muscleGroup:'Quads'      },
+  { id:'e22', name:'Romanian Deadlift', muscleGroup:'Hamstrings' },
+  { id:'e23', name:'Leg Curl',          muscleGroup:'Hamstrings' },
+  { id:'e24', name:'Hip Thrust',        muscleGroup:'Glutes'     },
+  { id:'e25', name:'Calf Raises',       muscleGroup:'Calves'     },
+  { id:'e26', name:'Plank',             muscleGroup:'Core'       },
+  { id:'e27', name:'Cable Crunch',      muscleGroup:'Core'       },
+];
+
+// ─── SEED PROGRAM ─────────────────────────────────────────────────────────────
+
+const SEED_PROGRAM = {
+  Monday:    [ { exerciseId:'e1',  targetSets:4, targetReps:8  }, { exerciseId:'e5',  targetSets:4, targetReps:8  }, { exerciseId:'e9',  targetSets:3, targetReps:12 }, { exerciseId:'e6',  targetSets:3, targetReps:15 }, { exerciseId:'e3',  targetSets:3, targetReps:12 } ],
+  Wednesday: [ { exerciseId:'e12', targetSets:4, targetReps:8  }, { exerciseId:'e13', targetSets:4, targetReps:8  }, { exerciseId:'e15', targetSets:3, targetReps:10 }, { exerciseId:'e17', targetSets:3, targetReps:12 }, { exerciseId:'e8',  targetSets:3, targetReps:15 } ],
+  Friday:    [ { exerciseId:'e19', targetSets:4, targetReps:6  }, { exerciseId:'e22', targetSets:3, targetReps:8  }, { exerciseId:'e20', targetSets:3, targetReps:10 }, { exerciseId:'e24', targetSets:3, targetReps:12 }, { exerciseId:'e25', targetSets:4, targetReps:15 } ],
+};
+
+// ─── SEED LOGS ────────────────────────────────────────────────────────────────
+// 8 weeks of Push / Pull / Legs history with realistic progressive overload.
+// Push = Monday  |  Pull = Wednesday  |  Legs = Friday
+
+(function() {
+  // helper: build a sets array
+  function ss(weight, reps, n) { return Array.from({ length:n }, () => ({ weight, reps })); }
+
+  // Push sessions (Mondays) — bench, ohp, tricep, laterals, cable fly
+  const push = [
+    { date:'2026-01-12', bench:80,  ohp:55,   tri:30,  lat:10,  fly:15  },
+    { date:'2026-01-19', bench:80,  ohp:55,   tri:32.5,lat:10,  fly:15  },
+    { date:'2026-01-26', bench:82.5,ohp:57.5, tri:32.5,lat:10,  fly:17.5},
+    { date:'2026-02-02', bench:82.5,ohp:57.5, tri:35,  lat:12,  fly:17.5},
+    { date:'2026-02-09', bench:85,  ohp:60,   tri:35,  lat:12,  fly:20  },
+    { date:'2026-02-16', bench:85,  ohp:60,   tri:37.5,lat:12,  fly:20  },
+    { date:'2026-02-23', bench:87.5,ohp:62.5, tri:37.5,lat:12.5,fly:22.5},
+    { date:'2026-03-02', bench:90,  ohp:65,   tri:40,  lat:12.5,fly:22.5},
+  ];
+
+  // Pull sessions (Wednesdays) — pullup reps (bw), row, pulldown, curl, face pull
+  const pull = [
+    { date:'2026-01-14', pullReps:6,  row:70,  ld:55,  curl:14, fp:17.5 },
+    { date:'2026-01-21', pullReps:6,  row:70,  ld:57.5,curl:14, fp:17.5 },
+    { date:'2026-01-28', pullReps:7,  row:72.5,ld:60,  curl:14, fp:20   },
+    { date:'2026-02-04', pullReps:7,  row:72.5,ld:60,  curl:16, fp:20   },
+    { date:'2026-02-11', pullReps:8,  row:75,  ld:62.5,curl:16, fp:20   },
+    { date:'2026-02-18', pullReps:8,  row:75,  ld:65,  curl:16, fp:22.5 },
+    { date:'2026-02-25', pullReps:9,  row:77.5,ld:65,  curl:18, fp:22.5 },
+    { date:'2026-03-04', pullReps:9,  row:80,  ld:67.5,curl:18, fp:22.5 },
+  ];
+
+  // Leg sessions (Fridays) — squat, rdl, leg press, hip thrust, calf raises
+  const legs = [
+    { date:'2026-01-09', squat:100, rdl:80,  lp:130, ht:80,  calf:60  },
+    { date:'2026-01-16', squat:100, rdl:80,  lp:135, ht:80,  calf:60  },
+    { date:'2026-01-23', squat:105, rdl:85,  lp:140, ht:85,  calf:65  },
+    { date:'2026-01-30', squat:105, rdl:85,  lp:145, ht:90,  calf:65  },
+    { date:'2026-02-06', squat:110, rdl:87.5,lp:150, ht:90,  calf:70  },
+    { date:'2026-02-13', squat:110, rdl:90,  lp:155, ht:95,  calf:70  },
+    { date:'2026-02-20', squat:112.5,rdl:92.5,lp:160,ht:100, calf:72.5},
+    { date:'2026-02-27', squat:115, rdl:95,  lp:165, ht:105, calf:75  },
+  ];
+
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  function dayName(iso) { return DAYS[new Date(iso).getDay()]; }
+
+  window.__SEED_LOGS__ = [
+    ...push.map((p, i) => ({ id:`p${i}`, date:p.date, dayName:dayName(p.date), exercises:[
+      { exerciseId:'e1',  targetSets:4, targetReps:8,  sets:[...ss(p.bench,8,3), ...ss(p.bench,7,1)] },
+      { exerciseId:'e5',  targetSets:4, targetReps:8,  sets:[...ss(p.ohp,8,3),   ...ss(p.ohp,7,1)]   },
+      { exerciseId:'e9',  targetSets:3, targetReps:12, sets:ss(p.tri,12,3)  },
+      { exerciseId:'e6',  targetSets:3, targetReps:15, sets:ss(p.lat,15,3)  },
+      { exerciseId:'e3',  targetSets:3, targetReps:12, sets:ss(p.fly,12,3)  },
+    ]})),
+    ...pull.map((p, i) => ({ id:`w${i}`, date:p.date, dayName:dayName(p.date), exercises:[
+      { exerciseId:'e12', targetSets:4, targetReps:8,  sets:ss(0,p.pullReps,4)  },
+      { exerciseId:'e13', targetSets:4, targetReps:8,  sets:[...ss(p.row,8,3), ...ss(p.row,7,1)] },
+      { exerciseId:'e15', targetSets:3, targetReps:10, sets:ss(p.ld,10,3)  },
+      { exerciseId:'e17', targetSets:3, targetReps:12, sets:ss(p.curl,12,3) },
+      { exerciseId:'e8',  targetSets:3, targetReps:15, sets:ss(p.fp,15,3)   },
+    ]})),
+    ...legs.map((p, i) => ({ id:`l${i}`, date:p.date, dayName:dayName(p.date), exercises:[
+      { exerciseId:'e19', targetSets:4, targetReps:6,  sets:[...ss(p.squat,6,3), ...ss(p.squat,5,1)] },
+      { exerciseId:'e22', targetSets:3, targetReps:8,  sets:ss(p.rdl,8,3)   },
+      { exerciseId:'e20', targetSets:3, targetReps:10, sets:ss(p.lp,10,3)   },
+      { exerciseId:'e24', targetSets:3, targetReps:12, sets:ss(p.ht,12,3)   },
+      { exerciseId:'e25', targetSets:4, targetReps:15, sets:ss(p.calf,15,4) },
+    ]})),
+  ].sort((a,b) => new Date(b.date)-new Date(a.date));
+})();
+
+const SEED_LOGS = window.__SEED_LOGS__ || [];
+
+// ─── STORAGE ──────────────────────────────────────────────────────────────────
+
+const S = {
+  get: (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+
+function todayName() {
+  const d = new Date().getDay();
+  return DAYS[d === 0 ? 6 : d - 1];
+}
+
+function fmt(n) {
+  const num = Number(n);
+  return Number.isInteger(num) ? String(num) : num.toFixed(1);
+}
+
+function fmtDate(iso) {
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+function calcVolume(sets) {
+  return (sets || []).reduce((s, x) => s + (Number(x.weight) || 0) * (Number(x.reps) || 0), 0);
+}
+
+function getSuggestion(exerciseId, targetReps, logs) {
+  const relevant = (logs || [])
+    .filter(l => l.exercises?.some(e => e.exerciseId === exerciseId))
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  if (!relevant.length) return null;
+  const lastEx = relevant[0].exercises.find(e => e.exerciseId === exerciseId);
+  if (!lastEx?.sets?.length) return null;
+  const maxW = Math.max(...lastEx.sets.map(s => Number(s.weight) || 0));
+  if (!maxW) return null;
+  const allHit = lastEx.sets.every(s => Number(s.reps) >= (targetReps || 0));
+  return { weight: allHit ? maxW + 2.5 : maxW, increased: allHit };
+}
+
+// ─── SVG ICONS ────────────────────────────────────────────────────────────────
+
+const Icon = {
+  Dumbbell: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2.5" y="9.5" width="3" height="5" rx="1"/>
+      <rect x="18.5" y="9.5" width="3" height="5" rx="1"/>
+      <rect x="5.5" y="8" width="2.5" height="8" rx="1"/>
+      <rect x="16" y="8" width="2.5" height="8" rx="1"/>
+      <line x1="8" y1="12" x2="16" y2="12"/>
+    </svg>
+  ),
+  Calendar: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="17" rx="2.5"/>
+      <line x1="3" y1="9" x2="21" y2="9"/>
+      <line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="16" y1="2" x2="16" y2="6"/>
+    </svg>
+  ),
+  Chart: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="4 17 9 11 13 14 20 7"/>
+      <line x1="4" y1="21" x2="20" y2="21"/>
+    </svg>
+  ),
+  List: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="9" y1="6" x2="20" y2="6"/>
+      <line x1="9" y1="12" x2="20" y2="12"/>
+      <line x1="9" y1="18" x2="20" y2="18"/>
+      <circle cx="4.5" cy="6" r="1.2" fill={color} stroke="none"/>
+      <circle cx="4.5" cy="12" r="1.2" fill={color} stroke="none"/>
+      <circle cx="4.5" cy="18" r="1.2" fill={color} stroke="none"/>
+    </svg>
+  ),
+  Settings: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+  ),
+  Moon: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  ),
+  CheckCircle: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <polyline points="9 12 11 14 15 10"/>
+    </svg>
+  ),
+  Trash: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+      <path d="M10 11v6M14 11v6"/>
+      <path d="M9 6V4h6v2"/>
+    </svg>
+  ),
+  Warning: ({ size=22, color='currentColor' }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  ),
+};
+
+// ─── SHARED UI ATOMS ──────────────────────────────────────────────────────────
+
+// Reps wordmark — outlined SVG, no font dependency
+function Wordmark() {
+  return (
+    <svg viewBox="0 0 475 112" height="20" style={{ display: 'block', overflow: 'visible' }} fill="white">
+      <g transform="matrix(1,0,0,1,-446.634741,-1633.275338)">
+        <g transform="matrix(2.911358,0,0,2.911358,-2121.887458,-1676.832505)">
+          <path d="M882.242,1174.572L882.242,1139.372L898.892,1139.372C900.959,1139.372 902.784,1139.656 904.367,1140.222C905.95,1140.789 907.275,1141.572 908.342,1142.572C909.409,1143.572 910.217,1144.764 910.767,1146.147C911.317,1147.531 911.592,1149.006 911.592,1150.572C911.592,1153.539 910.667,1155.989 908.817,1157.922C906.967,1159.856 904.292,1160.939 900.792,1161.172L914.142,1174.572L902.942,1174.572L890.342,1161.472L890.342,1174.572L882.242,1174.572ZM903.392,1150.972L903.392,1150.472C903.392,1149.039 902.984,1147.964 902.167,1147.247C901.35,1146.531 900.175,1146.172 898.642,1146.172L890.342,1146.172L890.342,1155.222L898.642,1155.222C900.175,1155.222 901.35,1154.856 902.167,1154.122C902.984,1153.389 903.392,1152.339 903.392,1150.972Z" fillRule="nonzero"/>
+        </g>
+        <g transform="matrix(2.911358,0,0,2.911358,-2121.887458,-1676.832505)">
+          <path d="M919.942,1139.372L945.642,1139.372L945.642,1146.372L928.042,1146.372L928.042,1153.222L944.042,1153.222L944.042,1160.072L928.042,1160.072L928.042,1167.572L945.642,1167.572L945.642,1174.572L919.942,1174.572L919.942,1139.372Z" fillRule="nonzero"/>
+        </g>
+        <g transform="matrix(2.911358,0,0,2.911358,-2121.887458,-1676.832505)">
+          <path d="M954.442,1174.572L954.442,1139.372L971.042,1139.372C973.109,1139.372 974.934,1139.664 976.517,1140.247C978.1,1140.831 979.425,1141.622 980.492,1142.622C981.559,1143.622 982.367,1144.814 982.917,1146.197C983.467,1147.581 983.742,1149.072 983.742,1150.672C983.742,1152.272 983.467,1153.764 982.917,1155.147C982.367,1156.531 981.559,1157.722 980.492,1158.722C979.425,1159.722 978.1,1160.514 976.517,1161.097C974.934,1161.681 973.109,1161.972 971.042,1161.972L962.542,1161.972L962.542,1174.572L954.442,1174.572ZM975.542,1150.922L975.542,1150.422C975.542,1149.056 975.134,1148.022 974.317,1147.322C973.5,1146.622 972.325,1146.272 970.792,1146.272L962.542,1146.272L962.542,1155.072L970.792,1155.072C972.325,1155.072 973.5,1154.714 974.317,1153.997C975.134,1153.281 975.542,1152.256 975.542,1150.922Z" fillRule="nonzero"/>
+        </g>
+        <g transform="matrix(2.911358,0,0,2.911358,-2121.887458,-1676.832505)">
+          <path d="M1003.542,1175.322C1001.309,1175.322 999.267,1175.039 997.417,1174.472C995.567,1173.906 993.984,1173.122 992.667,1172.122C991.35,1171.122 990.334,1169.906 989.617,1168.472C988.9,1167.039 988.542,1165.472 988.542,1163.772L996.742,1163.772C996.742,1165.472 997.359,1166.756 998.592,1167.622C999.825,1168.489 1001.509,1168.922 1003.642,1168.922C1005.809,1168.922 1007.425,1168.514 1008.492,1167.697C1009.559,1166.881 1010.092,1165.872 1010.092,1164.672C1010.092,1163.339 1009.642,1162.447 1008.742,1161.997C1007.842,1161.547 1006.492,1161.189 1004.692,1160.922L1000.292,1160.272C997.092,1159.806 994.459,1158.747 992.392,1157.097C990.325,1155.447 989.292,1152.939 989.292,1149.572C989.292,1148.039 989.617,1146.606 990.267,1145.272C990.917,1143.939 991.842,1142.781 993.042,1141.797C994.242,1140.814 995.725,1140.031 997.492,1139.447C999.259,1138.864 1001.259,1138.572 1003.492,1138.572C1005.792,1138.572 1007.834,1138.864 1009.617,1139.447C1011.4,1140.031 1012.892,1140.814 1014.092,1141.797C1015.292,1142.781 1016.209,1143.931 1016.842,1145.247C1017.475,1146.564 1017.809,1147.956 1017.842,1149.422L1009.642,1149.422C1009.642,1148.122 1009.159,1147.056 1008.192,1146.222C1007.225,1145.389 1005.642,1144.972 1003.442,1144.972C1001.309,1144.972 999.784,1145.372 998.867,1146.172C997.95,1146.972 997.492,1147.872 997.492,1148.872C997.492,1150.206 997.942,1151.131 998.842,1151.647C999.742,1152.164 1001.042,1152.539 1002.742,1152.772L1006.992,1153.372C1008.559,1153.606 1010.034,1153.956 1011.417,1154.422C1012.8,1154.889 1014,1155.531 1015.017,1156.347C1016.034,1157.164 1016.842,1158.197 1017.442,1159.447C1018.042,1160.697 1018.342,1162.206 1018.342,1163.972C1018.342,1165.672 1017.984,1167.222 1017.267,1168.622C1016.55,1170.022 1015.542,1171.214 1014.242,1172.197C1012.942,1173.181 1011.384,1173.947 1009.567,1174.497C1007.75,1175.047 1005.742,1175.322 1003.542,1175.322Z" fillRule="nonzero"/>
+        </g>
+        <g transform="matrix(2.911358,0,0,2.911358,-2121.887458,-1676.832505)">
+          <path d="M1034.364,1158.389C1032.868,1158.389 1031.464,1158.112 1030.152,1157.558C1028.84,1157.004 1027.703,1156.246 1026.741,1155.284C1025.78,1154.322 1025.022,1153.19 1024.468,1151.888C1023.914,1150.586 1023.637,1149.187 1023.637,1147.691C1023.637,1146.194 1023.914,1144.79 1024.468,1143.478C1025.022,1142.167 1025.78,1141.03 1026.741,1140.068C1027.703,1139.106 1028.84,1138.348 1030.152,1137.794C1031.464,1137.24 1032.868,1136.963 1034.364,1136.963C1035.841,1136.963 1037.235,1137.24 1038.547,1137.794C1039.859,1138.348 1040.996,1139.106 1041.958,1140.068C1042.92,1141.03 1043.682,1142.167 1044.246,1143.478C1044.81,1144.79 1045.091,1146.194 1045.091,1147.691C1045.091,1149.187 1044.81,1150.586 1044.246,1151.888C1043.682,1153.19 1042.92,1154.322 1041.958,1155.284C1040.996,1156.246 1039.859,1157.004 1038.547,1157.558C1037.235,1158.112 1035.841,1158.389 1034.364,1158.389ZM1034.364,1156.057C1035.589,1156.057 1036.711,1155.833 1037.731,1155.386C1038.751,1154.939 1039.621,1154.337 1040.34,1153.579C1041.059,1152.821 1041.623,1151.932 1042.031,1150.912C1042.439,1149.891 1042.643,1148.818 1042.643,1147.691C1042.643,1146.544 1042.439,1145.456 1042.031,1144.426C1041.623,1143.396 1041.059,1142.502 1040.34,1141.744C1039.621,1140.986 1038.751,1140.389 1037.731,1139.951C1036.711,1139.514 1035.589,1139.295 1034.364,1139.295C1033.14,1139.295 1032.018,1139.514 1030.997,1139.951C1029.977,1140.389 1029.103,1140.986 1028.374,1141.744C1027.645,1142.502 1027.082,1143.396 1026.683,1144.426C1026.285,1145.456 1026.086,1146.544 1026.086,1147.691C1026.086,1148.837 1026.285,1149.916 1026.683,1150.926C1027.082,1151.937 1027.645,1152.821 1028.374,1153.579C1029.103,1154.337 1029.977,1154.939 1030.997,1155.386C1032.018,1155.833 1033.14,1156.057 1034.364,1156.057ZM1036.58,1149.556L1039.903,1149.556C1039.65,1150.839 1039.043,1151.859 1038.081,1152.617C1037.119,1153.375 1035.929,1153.754 1034.51,1153.754C1033.616,1153.754 1032.805,1153.598 1032.076,1153.287C1031.347,1152.976 1030.725,1152.549 1030.21,1152.005C1029.695,1151.461 1029.292,1150.819 1029.001,1150.081C1028.709,1149.342 1028.563,1148.546 1028.563,1147.691L1028.563,1147.632C1028.563,1146.777 1028.704,1145.98 1028.986,1145.242C1029.268,1144.504 1029.666,1143.867 1030.181,1143.333C1030.696,1142.798 1031.318,1142.376 1032.047,1142.065C1032.776,1141.754 1033.587,1141.598 1034.481,1141.598C1035.977,1141.598 1037.192,1141.992 1038.125,1142.779C1039.057,1143.566 1039.64,1144.552 1039.874,1145.738L1036.58,1145.738C1036.502,1145.349 1036.283,1145.014 1035.924,1144.732C1035.564,1144.45 1035.083,1144.309 1034.481,1144.309C1033.606,1144.309 1032.941,1144.64 1032.484,1145.3C1032.027,1145.961 1031.799,1146.738 1031.799,1147.632L1031.799,1147.691C1031.799,1148.643 1032.032,1149.44 1032.499,1150.081C1032.965,1150.722 1033.626,1151.043 1034.481,1151.043C1035.083,1151.043 1035.559,1150.902 1035.909,1150.62C1036.259,1150.338 1036.482,1149.984 1036.58,1149.556Z" fillRule="nonzero"/>
+        </g>
+      </g>
+    </svg>
+  );
+}
+
+// Set dot indicators  ●●●○
+function SetDots({ done, total, size=9 }) {
+  return (
+    <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} style={{
+          width: size, height: size, borderRadius: '50%',
+          background: i < done ? T.lime : T.muted,
+          transition: 'background 0.25s ease',
+          flexShrink: 0,
+        }} />
+      ))}
+    </div>
+  );
+}
+
+// Muscle group pill
+function MgPill({ group }) {
+  const c = mgColor(group);
+  return (
+    <span style={{
+      fontSize: 10, fontWeight: 700, letterSpacing: '0.04em',
+      color: c, background: `${c}18`,
+      borderRadius: 5, padding: '2px 7px',
+      textTransform: 'uppercase',
+    }}>{group}</span>
+  );
+}
+
+// Lime primary button
+function LimeBtn({ children, onClick, style = {} }) {
+  return (
+    <button onClick={onClick} style={{
+      width: '100%', background: T.lime, border: 'none',
+      color: '#000', borderRadius: 14, padding: '16px',
+      fontSize: 16, fontWeight: 800, letterSpacing: '-0.01em',
+      ...style,
+    }}>{children}</button>
+  );
+}
+
+// Ghost button
+function GhostBtn({ children, onClick, style = {} }) {
+  return (
+    <button onClick={onClick} style={{
+      width: '100%', background: 'none', border: `1px solid ${T.border2}`,
+      color: T.dim, borderRadius: 14, padding: '14px',
+      fontSize: 14, fontWeight: 500,
+      ...style,
+    }}>{children}</button>
+  );
+}
+
+// Screen header
+function Header({ left, right, sub }) {
+  return (
+    <div style={{ paddingTop: 20, paddingBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div>
+        {sub && <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.dim, marginBottom: 4 }}>{sub}</div>}
+        <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>{left}</div>
+      </div>
+      {right}
+    </div>
+  );
+}
+
+// ─── SVG LINE CHART ───────────────────────────────────────────────────────────
+
+function LineChart({ data }) {
+  if (!data || data.length < 2) {
+    return (
+      <div style={{ height: 120, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', background: T.card2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Icon.Chart size={18} color={T.dim} />
+        </div>
+        <span style={{ color: T.dim, fontSize: 13 }}>Log more sessions to see a chart</span>
+      </div>
+    );
+  }
+  const W = 320, H = 130;
+  const padL = 38, padR = 8, padT = 12, padB = 28;
+  const w = W - padL - padR, h = H - padT - padB;
+  const vals = data.map(d => d.value);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const range = max - min || 1;
+  const px = i => padL + (i / (data.length - 1)) * w;
+  const py = v => padT + h - ((v - min) / range) * h;
+  const pts = data.map((d, i) => `${px(i)},${py(d.value)}`).join(' ');
+  const yTicks = [min, max];
+  const showLabel = i => data.length <= 5 || i === 0 || i === data.length - 1 || i % Math.ceil(data.length / 4) === 0;
+
+  return (
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: 'visible' }}>
+      {yTicks.map((v, i) => (
+        <g key={i}>
+          <line x1={padL} y1={py(v)} x2={padL + w} y2={py(v)} stroke={T.border} strokeWidth={1} strokeDasharray="4,4" />
+          <text x={padL - 5} y={py(v) + 4} textAnchor="end" fill={T.dim} fontSize={9} fontWeight="600">{fmt(v)}</text>
+        </g>
+      ))}
+      <polyline points={pts} fill="none" stroke={T.lime} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+      {data.map((d, i) => (
+        <circle key={i} cx={px(i)} cy={py(d.value)} r={3.5} fill={T.lime} />
+      ))}
+      {data.map((d, i) => showLabel(i) && (
+        <text key={i} x={px(i)} y={H - 2} textAnchor="middle" fill={T.dim} fontSize={9} fontWeight="500">{d.label}</text>
+      ))}
+    </svg>
+  );
+}
+
+// ─── REST TIMER ───────────────────────────────────────────────────────────────
+
+function RestTimer() {
+  const [active, setActive] = useState(false);
+  const [total,  setTotal]  = useState(90);
+  const [left,   setLeft]   = useState(90);
+
+  useEffect(() => {
+    if (!active) return;
+    if (left <= 0) { setActive(false); return; }
+    const t = setTimeout(() => setLeft(l => l - 1), 1000);
+    return () => clearTimeout(t);
+  }, [active, left]);
+
+  const start = s => { setTotal(s); setLeft(s); setActive(true); };
+  const stop  = () => { setActive(false); setLeft(total); };
+
+  if (!active) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+        <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginRight: 2 }}>Rest</span>
+        {[60, 90, 120, 180].map(s => (
+          <button key={s} onClick={() => start(s)} style={{
+            background: T.card2, border: `1px solid ${T.border2}`, color: T.white,
+            borderRadius: 8, padding: '5px 11px', fontSize: 12, fontWeight: 600,
+          }}>{s}s</button>
+        ))}
+      </div>
+    );
+  }
+
+  const r    = 19;
+  const circ = 2 * Math.PI * r;
+  const dash = circ * (left / total);
+  const warn = left <= 10;
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <svg width={48} height={48} style={{ flexShrink: 0 }}>
+        <circle cx={24} cy={24} r={r} fill="none" stroke={T.muted} strokeWidth={2.5} />
+        <circle cx={24} cy={24} r={r} fill="none"
+          stroke={warn ? T.red : T.lime}
+          strokeWidth={2.5}
+          strokeDasharray={`${dash} ${circ}`}
+          strokeLinecap="round"
+          transform="rotate(-90 24 24)" />
+        <text x={24} y={28} textAnchor="middle" fill={warn ? T.red : T.white} fontSize={12} fontWeight="800">{left}</text>
+      </svg>
+      <button onClick={stop} style={{
+        background: T.card2, border: `1px solid ${T.border2}`,
+        color: T.dim, borderRadius: 8, padding: '6px 14px', fontSize: 12, fontWeight: 600,
+      }}>Skip</button>
+    </div>
+  );
+}
+
+// ─── SWAP MODAL ───────────────────────────────────────────────────────────────
+
+function SwapModal({ exerciseId, exercises, usedIds, onSwap, onClose }) {
+  const source = exercises.find(e => e.id === exerciseId);
+  const alts   = exercises.filter(e => e.muscleGroup === source?.muscleGroup && !usedIds.includes(e.id));
+  const c      = mgColor(source?.muscleGroup);
+
+  return (
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.88)', zIndex: 300, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+      <div style={{ background: T.card, borderRadius: '20px 20px 0 0', width: '100%', maxWidth: 480, maxHeight: '72vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        {/* Handle */}
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 12, paddingBottom: 4 }}>
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: T.border2 }} />
+        </div>
+        <div style={{ padding: '14px 20px 16px', borderBottom: `1px solid ${T.border}` }}>
+          <div style={{ fontWeight: 800, fontSize: 17, letterSpacing: '-0.02em', marginBottom: 4 }}>Swap Exercise</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ color: T.dim, fontSize: 13 }}>Same muscle group:</span>
+            <MgPill group={source?.muscleGroup} />
+          </div>
+        </div>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '12px 16px' }}>
+          {alts.length === 0 ? (
+            <div style={{ color: T.dim, textAlign: 'center', padding: '32px 0', fontSize: 14 }}>No alternatives in your library</div>
+          ) : alts.map(ex => (
+            <button key={ex.id} onClick={() => onSwap(ex.id)} style={{
+              width: '100%', background: T.card2, border: `1px solid ${T.border}`,
+              borderLeft: `3px solid ${mgColor(ex.muscleGroup)}`,
+              borderRadius: 12, padding: '14px 16px', textAlign: 'left', color: T.white,
+              marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            }}>
+              <span style={{ fontSize: 15, fontWeight: 600 }}>{ex.name}</span>
+              <span style={{ color: T.lime, fontSize: 18, fontWeight: 700 }}>+</span>
+            </button>
+          ))}
+        </div>
+        <div style={{ padding: '12px 16px', borderTop: `1px solid ${T.border}` }}>
+          <GhostBtn onClick={onClose}>Cancel</GhostBtn>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── EXERCISE CARD (active workout) ──────────────────────────────────────────
+
+function ExerciseCard({ wex, exercise, logs, onLogSet, onSwap, isExpanded, onToggle }) {
+  const suggestion = useMemo(() => getSuggestion(wex.exerciseId, wex.targetReps, logs), [wex.exerciseId, wex.targetReps, logs]);
+  const [weight, setWeight] = useState(() => suggestion ? fmt(suggestion.weight) : '');
+  const [reps,   setReps]   = useState('');
+  const [flash,  setFlash]  = useState(false);
+
+  useEffect(() => {
+    if (suggestion && !weight) setWeight(fmt(suggestion.weight));
+  }, [suggestion]);
+
+  const done   = wex.sets.length >= wex.targetSets;
+  const color  = mgColor(exercise?.muscleGroup);
+
+  const handleLog = () => {
+    if (!weight || !reps) return;
+    onLogSet(parseFloat(weight), parseInt(reps));
+    setReps('');
+    setFlash(true);
+    setTimeout(() => setFlash(false), 400);
+  };
+
+  return (
+    <div className="ex-card" style={{
+      background: flash ? `${T.lime}10` : done ? `rgba(200,255,0,0.05)` : T.card,
+      borderRadius: 16,
+      border: `1px solid ${done ? `rgba(200,255,0,0.25)` : T.border}`,
+      borderLeft: `3px solid ${done ? T.lime : color}`,
+      marginBottom: 10,
+      overflow: 'hidden',
+      transition: 'background 0.3s, border-color 0.2s',
+    }}>
+      {/* Collapsed header */}
+      <div onClick={onToggle} style={{ padding: '16px 16px', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ fontWeight: 800, fontSize: 15, letterSpacing: '-0.02em' }}>{exercise?.name || '?'}</span>
+            {done && (
+              <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', background: T.lime, color: '#000', borderRadius: 5, padding: '2px 7px' }}>Done</span>
+            )}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <SetDots done={wex.sets.length} total={wex.targetSets} />
+            <span style={{ color: T.dim, fontSize: 12 }}>{wex.targetSets}×{wex.targetReps}</span>
+            {suggestion && (
+              <span style={{ fontSize: 12, fontWeight: 700, color: suggestion.increased ? T.lime : T.dim }}>
+                {suggestion.increased ? '↑' : '→'} {fmt(suggestion.weight)} kg
+              </span>
+            )}
+          </div>
+        </div>
+        <div style={{ color: T.dim, fontSize: 13, flexShrink: 0 }}>
+          {isExpanded ? '▲' : '▼'}
+        </div>
+      </div>
+
+      {/* Expanded */}
+      {isExpanded && (
+        <div style={{ borderTop: `1px solid ${T.border}` }}>
+          {/* Logged sets */}
+          {wex.sets.length > 0 && (
+            <div style={{ padding: '12px 16px 4px' }}>
+              {wex.sets.map((s, i) => (
+                <div key={i} style={{
+                  display: 'flex', gap: 8, alignItems: 'center', padding: '6px 0',
+                  borderBottom: i < wex.sets.length - 1 ? `1px solid ${T.border}` : 'none',
+                }}>
+                  <span style={{ width: 24, fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: T.dim }}>S{i+1}</span>
+                  <span style={{ fontWeight: 700, fontSize: 14 }}>{fmt(s.weight)} <span style={{ fontWeight: 400, color: T.dim, fontSize: 12 }}>kg</span></span>
+                  <span style={{ color: T.muted, fontSize: 12 }}>×</span>
+                  <span style={{ fontWeight: 700, fontSize: 14 }}>{s.reps} <span style={{ fontWeight: 400, color: T.dim, fontSize: 12 }}>reps</span></span>
+                  <span style={{ marginLeft: 'auto', color: T.lime, fontSize: 14 }}>✓</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Input area */}
+          {!done && (
+            <div style={{ padding: '16px 16px 12px' }}>
+              <div style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                color: T.dim, marginBottom: 14,
+              }}>Set {wex.sets.length + 1} of {wex.targetSets}</div>
+
+              {/* Stepper controls — stacked so each gets full width */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14 }}>
+                {/* Weight stepper */}
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginBottom: 6 }}>Weight (kg)</div>
+                  <div style={{ display: 'flex', alignItems: 'center', background: T.card2, borderRadius: 12, border: `1.5px solid ${T.border2}` }}>
+                    <button onClick={() => setWeight(w => fmt(Math.max(0, parseFloat(w||0) - 2.5)))} style={{
+                      width: 52, background: 'none', border: 'none', color: T.dim,
+                      fontSize: 24, fontWeight: 300, flexShrink: 0, padding: '14px 0',
+                    }}>−</button>
+                    <input
+                      type="number" inputMode="decimal" value={weight}
+                      onChange={e => setWeight(e.target.value)}
+                      placeholder={suggestion ? fmt(suggestion.weight) : '0'}
+                      style={{
+                        flex: 1, width: 0, background: 'none', border: 'none', color: T.white,
+                        fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em',
+                        textAlign: 'center', padding: '14px 0',
+                      }}
+                    />
+                    <button onClick={() => setWeight(w => fmt(parseFloat(w||0) + 2.5))} style={{
+                      width: 52, background: 'none', border: 'none', color: T.lime,
+                      fontSize: 24, fontWeight: 300, flexShrink: 0, padding: '14px 0',
+                    }}>+</button>
+                  </div>
+                </div>
+                {/* Reps stepper */}
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginBottom: 6 }}>Reps</div>
+                  <div style={{ display: 'flex', alignItems: 'center', background: T.card2, borderRadius: 12, border: `1.5px solid ${T.border2}` }}>
+                    <button onClick={() => setReps(r => String(Math.max(1, parseInt(r||wex.targetReps) - 1)))} style={{
+                      width: 52, background: 'none', border: 'none', color: T.dim,
+                      fontSize: 24, fontWeight: 300, flexShrink: 0, padding: '14px 0',
+                    }}>−</button>
+                    <input
+                      type="number" inputMode="numeric" value={reps}
+                      onChange={e => setReps(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleLog()}
+                      placeholder={String(wex.targetReps)}
+                      style={{
+                        flex: 1, width: 0, background: 'none', border: 'none', color: T.white,
+                        fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em',
+                        textAlign: 'center', padding: '14px 0',
+                      }}
+                    />
+                    <button onClick={() => setReps(r => String(parseInt(r||wex.targetReps) + 1))} style={{
+                      width: 52, background: 'none', border: 'none', color: T.lime,
+                      fontSize: 24, fontWeight: 300, flexShrink: 0, padding: '14px 0',
+                    }}>+</button>
+                  </div>
+                </div>
+              </div>
+
+              <button onClick={handleLog} style={{
+                width: '100%', background: T.lime, border: 'none', color: '#000',
+                borderRadius: 12, padding: '15px', fontSize: 15, fontWeight: 800,
+                letterSpacing: '-0.01em',
+              }}>Log Set</button>
+            </div>
+          )}
+
+          {/* Bottom row */}
+          <div style={{ padding: '10px 16px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
+            <button onClick={onSwap} style={{
+              background: 'none', border: `1px solid ${T.border2}`, color: T.dim,
+              borderRadius: 8, padding: '7px 14px', fontSize: 12, fontWeight: 600,
+            }}>⇄ Swap</button>
+            <RestTimer />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── RING PROGRESS ────────────────────────────────────────────────────────────
+
+function RingProgress({ done, total, size = 64 }) {
+  const strokeW = 5;
+  const r       = (size - strokeW * 2) / 2;
+  const circ    = 2 * Math.PI * r;
+  const pct     = total > 0 ? Math.min(done / total, 1) : 0;
+  const cx = size / 2, cy = size / 2;
+  return (
+    <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
+      <svg width={size} height={size} style={{ transform: 'rotate(-90deg)', display: 'block' }}>
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={T.muted} strokeWidth={strokeW} />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={T.lime} strokeWidth={strokeW}
+          strokeDasharray={`${pct * circ} ${circ}`} strokeLinecap="round"
+          style={{ transition: 'stroke-dasharray 0.4s ease' }} />
+      </svg>
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <span style={{ fontWeight: 800, fontSize: size * 0.25, color: T.lime, letterSpacing: '-0.02em', lineHeight: 1 }}>{done}</span>
+        <span style={{ fontSize: size * 0.17, color: T.dim, lineHeight: 1 }}>/{total}</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── DAY STRIP ────────────────────────────────────────────────────────────────
+
+function DayStrip({ program }) {
+  const today = todayName();
+  const labels = ['M','T','W','T','F','S','S'];
+  return (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
+      {DAYS.map((day, i) => {
+        const isToday   = day === today;
+        const hasWork   = (program[day] || []).length > 0;
+        return (
+          <div key={day} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: isToday ? T.lime : T.dim }}>{labels[i]}</span>
+            <div style={{
+              width: 30, height: 30, borderRadius: '50%',
+              background: isToday ? T.lime : 'transparent',
+              border: `1.5px solid ${isToday ? T.lime : hasWork ? T.border2 : T.border}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              {hasWork && !isToday && <div style={{ width: 5, height: 5, borderRadius: '50%', background: T.dim }} />}
+              {isToday && <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#000' }} />}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── BACKUP NUDGE ─────────────────────────────────────────────────────────────
+
+function BackupNudge({ onGoToSettings }) {
+  const lastBackup = S.get('wa_last_backup', null);
+  const [dismissed, setDismissed] = useState(false);
+
+  const daysSince = lastBackup
+    ? Math.floor((Date.now() - new Date(lastBackup).getTime()) / 86400000)
+    : null;
+
+  const show = !dismissed && (lastBackup === null || daysSince >= 7);
+  if (!show) return null;
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 10,
+      background: 'rgba(200,255,0,0.08)', border: '1px solid rgba(200,255,0,0.2)',
+      borderRadius: 12, padding: '10px 14px', marginBottom: 12,
+    }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: T.lime, marginBottom: 1 }}>Back up your data</div>
+        <div style={{ fontSize: 12, color: T.dim }}>
+          {lastBackup === null ? 'You haven\'t backed up yet.' : `Last backup ${daysSince}d ago.`}
+        </div>
+      </div>
+      <button onClick={onGoToSettings} style={{
+        background: T.lime, border: 'none', color: '#000',
+        borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 800, flexShrink: 0,
+      }}>Export</button>
+      <button onClick={() => setDismissed(true)} style={{
+        background: 'none', border: 'none', color: T.dim,
+        fontSize: 18, lineHeight: 1, padding: '0 2px', flexShrink: 0, cursor: 'pointer',
+      }}>×</button>
+    </div>
+  );
+}
+
+// ─── TODAY VIEW ───────────────────────────────────────────────────────────────
+
+function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, saveWorkout, setTab }) {
+  const today      = todayName();
+  const todayIso   = new Date().toISOString().split('T')[0];
+  const todayProg  = program[today] || [];
+  const [expandedIdx, setExpandedIdx] = useState(null);
+  const [swapIdx,     setSwapIdx]     = useState(null);
+  const [confirmEnd,  setConfirmEnd]  = useState(false);
+  const todayLog = useMemo(() => (logs || []).find(l => l.date === todayIso), [logs, todayIso]);
+  const lastLog  = useMemo(() => (logs || []).find(l => l.dayName === today && l.date !== todayIso), [logs, today, todayIso]);
+
+  const startWorkout = () => setActiveWorkout({
+    dayName: today,
+    startTime: new Date().toISOString(),
+    exercises: todayProg.map(pe => ({ exerciseId: pe.exerciseId, targetSets: pe.targetSets, targetReps: pe.targetReps, sets: [] })),
+  });
+
+  const logSet = (idx, weight, reps) => setActiveWorkout(prev => ({
+    ...prev,
+    exercises: prev.exercises.map((e, i) => i === idx ? { ...e, sets: [...e.sets, { weight, reps }] } : e),
+  }));
+
+  const swapExercise = (exIdx, newId) => {
+    setActiveWorkout(prev => ({
+      ...prev,
+      exercises: prev.exercises.map((e, i) => i === exIdx ? { ...e, exerciseId: newId, sets: [] } : e),
+    }));
+    setSwapIdx(null);
+  };
+
+  const setsCompleted  = (activeWorkout?.exercises || []).filter(e => e.sets.length >= e.targetSets).length;
+  const totalExercises = (activeWorkout?.exercises || []).length;
+
+  // ── REST DAY ──
+  if (todayProg.length === 0 && !activeWorkout) {
+    return (
+      <div style={{ padding: '0 16px' }}>
+        <Header left={today} sub="Today" />
+        <DayStrip program={program} />
+        <BackupNudge onGoToSettings={() => setTab('settings')} />
+        <div style={{ background: T.card, borderRadius: 20, padding: '32px 24px', textAlign: 'center', border: `1px solid ${T.border}` }}>
+          <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.card2, border: `1px solid ${T.border2}`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <Icon.Moon size={28} color={T.dim} />
+          </div>
+          <div style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.02em', marginBottom: 8 }}>Rest Day</div>
+          <div style={{ color: T.dim, fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>No workout scheduled for {today}. Recovery is part of the program.</div>
+          <button onClick={() => setTab('program')} style={{
+            background: T.limeDim, border: `1px solid rgba(200,255,0,0.25)`, color: T.lime,
+            borderRadius: 12, padding: '12px 24px', fontSize: 14, fontWeight: 700,
+          }}>Set up {today} →</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── COMPLETED TODAY ──
+  if (todayLog && !activeWorkout) {
+    const totalSets  = (todayLog.exercises || []).reduce((s, e) => s + (e.sets?.length || 0), 0);
+    const totalVol   = (todayLog.exercises || []).reduce((s, e) =>
+      s + (e.sets || []).reduce((sv, set) => sv + (Number(set.weight) || 0) * (Number(set.reps) || 0), 0), 0);
+    return (
+      <div style={{ padding: '0 16px' }}>
+        <div style={{ paddingTop: 20, paddingBottom: 20 }}>
+          <Wordmark />
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginTop: 10 }}>{today}</div>
+        </div>
+        <BackupNudge onGoToSettings={() => setTab('settings')} />
+
+        {/* Completed banner */}
+        <div style={{ background: T.lime, borderRadius: 20, padding: '28px 20px', textAlign: 'center', marginBottom: 16 }}>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(0,0,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+            <Icon.CheckCircle size={28} color="#000" />
+          </div>
+          <div style={{ fontWeight: 900, fontSize: 26, letterSpacing: '-0.04em', color: '#000', marginBottom: 4 }}>Workout Done</div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(0,0,0,0.55)' }}>You crushed it today.</div>
+        </div>
+
+        {/* Stats row */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
+          {[
+            { label: 'Exercises', value: todayLog.exercises?.length || 0 },
+            { label: 'Sets',      value: totalSets },
+            { label: 'Volume',    value: totalVol >= 1000 ? `${(totalVol/1000).toFixed(1)}t` : `${totalVol}kg` },
+          ].map(({ label, value }) => (
+            <div key={label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: '14px 10px', textAlign: 'center' }}>
+              <div style={{ fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', color: T.white }}>{value}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginTop: 3 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Exercise summary */}
+        <div style={{ marginBottom: 16 }}>
+          {(todayLog.exercises || []).map((wex, i) => {
+            const ex = exercises.find(e => e.id === wex.exerciseId);
+            const c  = mgColor(ex?.muscleGroup);
+            const maxW = wex.sets?.length ? Math.max(...wex.sets.map(s => Number(s.weight) || 0)) : 0;
+            return (
+              <div key={i} style={{
+                background: T.card, borderRadius: 12,
+                border: `1px solid ${T.border}`, borderLeft: `3px solid ${c}`,
+                padding: '12px 14px', marginBottom: 6,
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14, letterSpacing: '-0.01em' }}>{ex?.name || '?'}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                    <MgPill group={ex?.muscleGroup} />
+                    <span style={{ fontSize: 12, color: T.dim }}>{wex.sets?.length || 0} sets</span>
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <SetDots done={wex.sets?.length || 0} total={Math.max(wex.sets?.length || 0, wex.targetSets || 0)} size={8} />
+                  {maxW > 0 && <div style={{ fontSize: 12, fontWeight: 700, color: T.dim, marginTop: 4 }}>{fmt(maxW)} kg</div>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Log another session */}
+        {todayProg.length > 0 && (
+          <GhostBtn onClick={startWorkout}>Log Another Session</GhostBtn>
+        )}
+      </div>
+    );
+  }
+
+  // ── READY TO START ──
+  if (todayProg.length > 0 && !activeWorkout) {
+    return (
+      <div style={{ padding: '0 16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingTop: 20, paddingBottom: 20 }}>
+          <div>
+            <Wordmark />
+            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginTop: 10 }}>{today}</div>
+          </div>
+          {lastLog && (
+            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: '6px 12px', textAlign: 'right' }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim }}>Last session</div>
+              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 1 }}>{fmtDate(lastLog.date)}</div>
+            </div>
+          )}
+        </div>
+
+        <DayStrip program={program} />
+        <BackupNudge onGoToSettings={() => setTab('settings')} />
+
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.dim, marginBottom: 12 }}>
+          {todayProg.length} Exercise{todayProg.length !== 1 ? 's' : ''} Planned
+        </div>
+
+        {todayProg.map((pe, i) => {
+          const ex  = exercises.find(e => e.id === pe.exerciseId);
+          const sug = getSuggestion(pe.exerciseId, pe.targetReps, logs);
+          const c   = mgColor(ex?.muscleGroup);
+          return (
+            <div key={i} style={{
+              background: T.card, borderRadius: 14,
+              border: `1px solid ${T.border}`, borderLeft: `3px solid ${c}`,
+              padding: '14px 16px', marginBottom: 8,
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: '-0.01em', marginBottom: 5 }}>{ex?.name || '?'}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <MgPill group={ex?.muscleGroup} />
+                  <span style={{ color: T.dim, fontSize: 12 }}>{pe.targetSets}×{pe.targetReps}</span>
+                  {sug && <span style={{ fontSize: 12, fontWeight: 700, color: sug.increased ? T.lime : T.dim }}>{sug.increased ? '↑' : '→'} {fmt(sug.weight)} kg</span>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        <div style={{ marginTop: 16 }}>
+          <LimeBtn onClick={startWorkout}>Start Workout</LimeBtn>
+        </div>
+      </div>
+    );
+  }
+
+  // ── ACTIVE WORKOUT ──
+  return (
+    <div style={{ padding: '0 16px' }}>
+      {/* Active header */}
+      <div style={{ paddingTop: 20, paddingBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <Wordmark />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: T.lime, display: 'inline-block' }} />
+            <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.04em', color: T.lime }}>In Progress · {today}</span>
+          </div>
+        </div>
+        <RingProgress done={setsCompleted} total={totalExercises} size={64} />
+      </div>
+
+      {activeWorkout.exercises.map((wex, i) => (
+        <ExerciseCard
+          key={`${wex.exerciseId}-${i}`}
+          wex={wex}
+          exercise={exercises.find(e => e.id === wex.exerciseId)}
+          logs={logs}
+          onLogSet={(w, r) => logSet(i, w, r)}
+          onSwap={() => setSwapIdx(i)}
+          isExpanded={expandedIdx === i}
+          onToggle={() => setExpandedIdx(expandedIdx === i ? null : i)}
+        />
+      ))}
+
+      <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <button onClick={() => setConfirmEnd(true)} style={{
+          width: '100%', background: T.limeDim, border: `1px solid rgba(200,255,0,0.3)`,
+          color: T.lime, borderRadius: 14, padding: '16px', fontSize: 16, fontWeight: 800, letterSpacing: '-0.01em',
+        }}>Finish Workout ✓</button>
+        <GhostBtn onClick={() => { if (window.confirm('Discard this workout?')) setActiveWorkout(null); }}>Discard</GhostBtn>
+      </div>
+
+      {/* Confirm finish */}
+      {confirmEnd && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.92)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <div style={{ background: T.card, borderRadius: 24, padding: 28, width: '100%', maxWidth: 380, textAlign: 'center', border: `1px solid ${T.border}` }}>
+            <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.limeDim, border: `1px solid rgba(200,255,0,0.3)`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <Icon.CheckCircle size={30} color={T.lime} />
+            </div>
+            <div style={{ fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', marginBottom: 8 }}>Finish Workout?</div>
+            <div style={{ color: T.dim, fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>
+              {setsCompleted}/{totalExercises} exercises completed.
+              {setsCompleted < totalExercises && <span style={{ color: '#FFD93D' }}> Some exercises aren't done yet.</span>}
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => setConfirmEnd(false)} style={{ flex: 1, background: T.card2, border: 'none', color: T.white, borderRadius: 12, padding: '14px', fontSize: 15, fontWeight: 600 }}>Keep going</button>
+              <button onClick={() => { setConfirmEnd(false); saveWorkout(); }} style={{ flex: 1, background: T.lime, border: 'none', color: '#000', borderRadius: 12, padding: '14px', fontSize: 15, fontWeight: 800 }}>Save ✓</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {swapIdx !== null && (
+        <SwapModal
+          exerciseId={activeWorkout.exercises[swapIdx].exerciseId}
+          exercises={exercises}
+          usedIds={activeWorkout.exercises.map(e => e.exerciseId)}
+          onSwap={newId => swapExercise(swapIdx, newId)}
+          onClose={() => setSwapIdx(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ─── PROGRAM VIEW ─────────────────────────────────────────────────────────────
+
+function ProgramView({ exercises, program, setProgram }) {
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [addOpen,     setAddOpen]     = useState(false);
+  const [newSets,     setNewSets]     = useState('4');
+  const [newReps,     setNewReps]     = useState('8');
+  const [search,      setSearch]      = useState('');
+  const [filterGroup, setFilterGroup] = useState('All');
+  const today = todayName();
+
+  const dayProg = selectedDay ? (program[selectedDay] || []) : [];
+
+  const addExercise = exId => {
+    setProgram(prev => ({ ...prev, [selectedDay]: [...(prev[selectedDay] || []), { exerciseId: exId, targetSets: parseInt(newSets)||4, targetReps: parseInt(newReps)||8 }] }));
+    setAddOpen(false); setSearch('');
+  };
+  const removeEx     = idx => setProgram(prev => ({ ...prev, [selectedDay]: dayProg.filter((_, i) => i !== idx) }));
+  const updateTarget = (idx, field, val) => setProgram(prev => ({
+    ...prev,
+    [selectedDay]: dayProg.map((pe, i) => i === idx ? { ...pe, [field]: parseInt(val) || pe[field] } : pe),
+  }));
+
+  const filteredEx = exercises.filter(e => {
+    const taken = dayProg.some(p => p.exerciseId === e.id);
+    return !taken && e.name.toLowerCase().includes(search.toLowerCase()) && (filterGroup === 'All' || e.muscleGroup === filterGroup);
+  });
+
+  // ── DAY LIST ──
+  if (!selectedDay) {
+    return (
+      <div style={{ padding: '0 16px' }}>
+        <Header left="Program" sub="Weekly Split" />
+        {DAYS.map(day => {
+          const prog    = program[day] || [];
+          const isToday = day === today;
+          return (
+            <button key={day} onClick={() => setSelectedDay(day)} style={{
+              width: '100%', background: T.card, border: `1px solid ${isToday ? 'rgba(200,255,0,0.4)' : T.border}`,
+              borderRadius: 14, padding: '14px 16px', textAlign: 'left', color: T.white, marginBottom: 8,
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: prog.length > 0 ? 4 : 0 }}>
+                  <span style={{ fontWeight: 700, fontSize: 15, letterSpacing: '-0.01em' }}>{day}</span>
+                  {isToday && <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', background: T.lime, color: '#000', borderRadius: 5, padding: '2px 7px' }}>Today</span>}
+                </div>
+                {prog.length > 0 ? (
+                  <div style={{ color: T.dim, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {prog.map(pe => exercises.find(e => e.id === pe.exerciseId)?.name).filter(Boolean).slice(0,3).join(' · ')}
+                    {prog.length > 3 ? ` +${prog.length-3}` : ''}
+                  </div>
+                ) : (
+                  <div style={{ color: T.muted, fontSize: 12 }}>Rest day</div>
+                )}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0, marginLeft: 10 }}>
+                {prog.length > 0 && <span style={{ fontSize: 12, fontWeight: 700, color: T.dim }}>{prog.length}</span>}
+                <span style={{ color: T.muted, fontSize: 16 }}>›</span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // ── DAY DETAIL ──
+  return (
+    <div style={{ padding: '0 16px' }}>
+      <div style={{ paddingTop: 20, paddingBottom: 4 }}>
+        <button onClick={() => setSelectedDay(null)} style={{ background: 'none', border: 'none', color: T.dim, fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4, marginBottom: 12 }}>
+          ← Back
+        </button>
+        <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 20 }}>{selectedDay}</div>
+      </div>
+
+      {dayProg.length === 0 && (
+        <div style={{ color: T.dim, fontSize: 14, textAlign: 'center', padding: '24px 0 8px' }}>No exercises yet</div>
+      )}
+
+      {dayProg.map((pe, i) => {
+        const ex = exercises.find(e => e.id === pe.exerciseId);
+        return (
+          <div key={i} style={{ background: T.card, borderRadius: 16, padding: '14px 16px', marginBottom: 10, border: `1px solid ${T.border}`, borderLeft: `3px solid ${mgColor(ex?.muscleGroup)}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: '-0.01em', marginBottom: 4 }}>{ex?.name || '?'}</div>
+                <MgPill group={ex?.muscleGroup} />
+              </div>
+              <button onClick={() => removeEx(i)} style={{ background: 'none', border: 'none', color: T.red, fontSize: 18, lineHeight: 1, padding: '0 4px' }}>✕</button>
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              {[['targetSets', 'Sets'], ['targetReps', 'Reps']].map(([field, label]) => (
+                <div key={field} style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginBottom: 6 }}>{label}</div>
+                  <input
+                    type="number" inputMode="numeric" defaultValue={pe[field]}
+                    onChange={e => updateTarget(i, field, e.target.value)}
+                    style={{ width: '100%', background: T.card2, border: `1.5px solid ${T.border2}`, borderRadius: 10, color: T.white, padding: '10px', fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', textAlign: 'center' }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
+      <button onClick={() => setAddOpen(true)} style={{
+        width: '100%', background: 'none', border: `2px dashed ${T.border2}`,
+        borderRadius: 14, color: T.dim, padding: '16px', fontSize: 15, fontWeight: 600, marginTop: 4,
+      }}>+ Add Exercise</button>
+
+      {addOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 300, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+          <div style={{ background: T.card, borderRadius: '20px 20px 0 0', width: '100%', maxWidth: 480, maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 12 }}>
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: T.border2 }} />
+            </div>
+            <div style={{ padding: '14px 20px 14px', borderBottom: `1px solid ${T.border}` }}>
+              <div style={{ fontWeight: 800, fontSize: 17, letterSpacing: '-0.02em' }}>Add to {selectedDay}</div>
+            </div>
+            {/* Target sets/reps */}
+            <div style={{ padding: '14px 16px 10px', display: 'flex', gap: 10, borderBottom: `1px solid ${T.border}` }}>
+              {[['Sets', newSets, setNewSets], ['Target Reps', newReps, setNewReps]].map(([label, val, setter]) => (
+                <div key={label} style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginBottom: 6 }}>{label}</div>
+                  <input type="number" inputMode="numeric" value={val} onChange={e => setter(e.target.value)}
+                    style={{ width: '100%', background: T.card2, border: `1.5px solid ${T.border2}`, borderRadius: 10, color: T.white, padding: '10px', fontSize: 22, fontWeight: 800, textAlign: 'center' }} />
+                </div>
+              ))}
+            </div>
+            {/* Search */}
+            <div style={{ padding: '12px 16px 8px' }}>
+              <input type="text" placeholder="Search exercises..." value={search} onChange={e => setSearch(e.target.value)}
+                style={{ width: '100%', background: T.card2, border: `1.5px solid ${T.border2}`, borderRadius: 12, color: T.white, padding: '11px 14px', fontSize: 15 }} />
+            </div>
+            <div className="chip-row" style={{ padding: '0 16px 10px' }}>
+              {['All', ...MUSCLE_GROUPS].map(g => (
+                <button key={g} onClick={() => setFilterGroup(g)} style={{
+                  background: filterGroup === g ? T.lime : T.card2, border: 'none',
+                  color: filterGroup === g ? '#000' : T.white, borderRadius: 20,
+                  padding: '6px 14px', fontSize: 12, fontWeight: filterGroup === g ? 700 : 500, whiteSpace: 'nowrap', flexShrink: 0,
+                }}>{g}</button>
+              ))}
+            </div>
+            <div style={{ overflowY: 'auto', flex: 1, padding: '0 16px' }}>
+              {filteredEx.length === 0 && <div style={{ color: T.dim, textAlign: 'center', padding: '24px 0', fontSize: 14 }}>No exercises found</div>}
+              {filteredEx.map(ex => (
+                <button key={ex.id} onClick={() => addExercise(ex.id)} style={{
+                  width: '100%', background: T.card2, border: `1px solid ${T.border}`,
+                  borderLeft: `3px solid ${mgColor(ex.muscleGroup)}`,
+                  borderRadius: 12, padding: '13px 16px', textAlign: 'left', color: T.white, marginBottom: 7,
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                }}>
+                  <div>
+                    <div style={{ fontSize: 15, fontWeight: 600 }}>{ex.name}</div>
+                    <div style={{ marginTop: 3 }}><MgPill group={ex.muscleGroup} /></div>
+                  </div>
+                  <span style={{ color: T.lime, fontSize: 20, fontWeight: 700 }}>+</span>
+                </button>
+              ))}
+              <div style={{ height: 16 }} />
+            </div>
+            <div style={{ padding: '12px 16px', borderTop: `1px solid ${T.border}` }}>
+              <GhostBtn onClick={() => setAddOpen(false)}>Cancel</GhostBtn>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── PROGRESS VIEW ────────────────────────────────────────────────────────────
+
+function ProgressView({ exercises, logs }) {
+  const loggedIds = useMemo(() => {
+    const ids = new Set();
+    (logs || []).forEach(l => (l.exercises || []).forEach(e => ids.add(e.exerciseId)));
+    return [...ids];
+  }, [logs]);
+
+  const [selId,        setSelId]        = useState(null);
+  const [chartMode,    setChartMode]    = useState('weight');
+  const [filterGroup,  setFilterGroup]  = useState('All');
+
+  const filteredIds = useMemo(() => {
+    if (filterGroup === 'All') return loggedIds;
+    return loggedIds.filter(id => exercises.find(e => e.id === id)?.muscleGroup === filterGroup);
+  }, [loggedIds, filterGroup, exercises]);
+
+  const activeId = selId && filteredIds.includes(selId) ? selId : filteredIds[0];
+  const activeEx = exercises.find(e => e.id === activeId);
+
+  const sessionsForEx = useMemo(() =>
+    (logs || []).filter(l => (l.exercises||[]).some(e => e.exerciseId === activeId))
+      .sort((a, b) => new Date(a.date) - new Date(b.date)),
+    [logs, activeId]
+  );
+
+  const weightData = useMemo(() => sessionsForEx.map(l => {
+    const ex  = l.exercises.find(e => e.exerciseId === activeId);
+    const max = Math.max(...(ex?.sets||[]).map(s => Number(s.weight)||0));
+    return { label: fmtDate(l.date), value: max };
+  }).filter(d => d.value > 0), [sessionsForEx, activeId]);
+
+  const volumeData = useMemo(() => sessionsForEx.map(l => {
+    const ex = l.exercises.find(e => e.exerciseId === activeId);
+    return { label: fmtDate(l.date), value: calcVolume(ex?.sets) };
+  }).filter(d => d.value > 0), [sessionsForEx, activeId]);
+
+  const recentSessions = [...sessionsForEx].reverse().slice(0, 6);
+  const bestWeight     = weightData.length ? Math.max(...weightData.map(d => d.value)) : null;
+
+  if ((logs || []).length === 0) {
+    return (
+      <div style={{ padding: '0 16px' }}>
+        <Header left="Progress" sub="Stats" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 60, gap: 12 }}>
+          <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.card, border: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon.Chart size={28} color={T.dim} />
+          </div>
+          <div style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.02em' }}>No data yet</div>
+          <div style={{ color: T.dim, fontSize: 14, textAlign: 'center', maxWidth: 260 }}>Finish your first workout to start tracking progression.</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: '0 16px' }}>
+      <Header left="Progress" sub="Stats" />
+
+      {/* Muscle group filter pills */}
+      <div className="chip-row" style={{ marginBottom: 12 }}>
+        {['All', ...MUSCLE_GROUPS.filter(g => loggedIds.some(id => exercises.find(e => e.id === id)?.muscleGroup === g))].map(g => (
+          <button key={g} onClick={() => { setFilterGroup(g); setSelId(null); }} style={{
+            background: filterGroup === g ? T.lime : T.card,
+            border: `1px solid ${filterGroup === g ? T.lime : T.border}`,
+            color: filterGroup === g ? '#000' : T.white,
+            borderRadius: 20, padding: '6px 14px', fontSize: 12,
+            fontWeight: filterGroup === g ? 800 : 500, whiteSpace: 'nowrap', flexShrink: 0,
+          }}>{g}</button>
+        ))}
+      </div>
+
+      {/* Exercise picker */}
+      <select value={activeId || ''} onChange={e => setSelId(e.target.value)} style={{
+        width: '100%', background: T.card, border: `1px solid ${T.border}`, borderRadius: 12,
+        color: T.white, padding: '13px 14px', fontSize: 15, fontWeight: 600, marginBottom: 16, appearance: 'none',
+      }}>
+        {filteredIds.map(id => <option key={id} value={id}>{exercises.find(e => e.id === id)?.name || id}</option>)}
+      </select>
+
+      {activeEx && (
+        <>
+          {/* Stat grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
+            {[
+              { label: 'Sessions',    value: sessionsForEx.length },
+              { label: 'Best Weight', value: bestWeight != null ? `${fmt(bestWeight)} kg` : '—' },
+              { label: 'Last Trained', value: sessionsForEx.length ? fmtDate(sessionsForEx[sessionsForEx.length-1].date) : '—' },
+              { label: 'Last Volume', value: volumeData.length ? `${Math.round(volumeData[volumeData.length-1].value)} kg` : '—' },
+            ].map(({ label, value }) => (
+              <div key={label} style={{ background: T.card, borderRadius: 14, padding: '16px', border: `1px solid ${T.border}` }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginBottom: 6 }}>{label}</div>
+                <div style={{ fontWeight: 800, fontSize: 24, letterSpacing: '-0.03em' }}>{value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Chart toggle */}
+          <div style={{ display: 'flex', background: T.card, borderRadius: 12, padding: 4, marginBottom: 12, border: `1px solid ${T.border}` }}>
+            {[['weight','Max Weight'], ['volume','Volume']].map(([v,l]) => (
+              <button key={v} onClick={() => setChartMode(v)} style={{
+                flex: 1, background: chartMode === v ? T.lime : 'none', border: 'none',
+                color: chartMode === v ? '#000' : T.dim, borderRadius: 9, padding: '9px',
+                fontSize: 13, fontWeight: chartMode === v ? 800 : 500, letterSpacing: '-0.01em',
+              }}>{l}</button>
+            ))}
+          </div>
+
+          {/* Chart */}
+          <div style={{ background: T.card, borderRadius: 16, padding: '16px 10px 8px', marginBottom: 20, border: `1px solid ${T.border}` }}>
+            <LineChart data={chartMode === 'weight' ? weightData : volumeData} />
+          </div>
+
+          {/* Recent sessions */}
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.dim, marginBottom: 12 }}>Recent Sessions</div>
+          {recentSessions.map((log, i) => {
+            const ex = log.exercises.find(e => e.exerciseId === activeId);
+            return (
+              <div key={i} style={{ background: T.card, borderRadius: 14, padding: '14px 16px', marginBottom: 8, border: `1px solid ${T.border}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <span style={{ fontWeight: 700, fontSize: 14 }}>
+                    {new Date(log.date).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: T.dim }}>Vol {Math.round(calcVolume(ex?.sets))} kg</span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {(ex?.sets||[]).map((s, j) => (
+                    <span key={j} style={{ background: T.card2, borderRadius: 7, padding: '4px 10px', fontSize: 12, fontWeight: 600, color: T.dim }}>
+                      {fmt(s.weight)}×{s.reps}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── LIBRARY VIEW ─────────────────────────────────────────────────────────────
+
+function LibraryView({ exercises, setExercises, logs }) {
+  const [addOpen,     setAddOpen]     = useState(false);
+  const [newName,     setNewName]     = useState('');
+  const [newGroup,    setNewGroup]    = useState('Chest');
+  const [filterGroup, setFilterGroup] = useState('All');
+  const [search,      setSearch]      = useState('');
+
+  const getLastWeight = useCallback(id => {
+    const relevant = (logs||[]).filter(l => l.exercises?.some(e => e.exerciseId === id)).sort((a,b) => new Date(b.date)-new Date(a.date));
+    if (!relevant.length) return null;
+    const ex = relevant[0].exercises.find(e => e.exerciseId === id);
+    const w  = Math.max(...(ex?.sets||[]).map(s => Number(s.weight)||0));
+    return w > 0 ? w : null;
+  }, [logs]);
+
+  const grouped = useMemo(() => {
+    const filtered = exercises.filter(e => {
+      const mg = filterGroup === 'All' || e.muscleGroup === filterGroup;
+      const sr = e.name.toLowerCase().includes(search.toLowerCase());
+      return mg && sr;
+    });
+    const g = {};
+    filtered.forEach(e => { (g[e.muscleGroup] = g[e.muscleGroup] || []).push(e); });
+    return g;
+  }, [exercises, filterGroup, search]);
+
+  const addExercise = () => {
+    if (!newName.trim()) return;
+    setExercises(prev => [...prev, { id: 'c_'+Date.now(), name: newName.trim(), muscleGroup: newGroup }]);
+    setNewName(''); setAddOpen(false);
+  };
+
+  return (
+    <div style={{ padding: '0 16px' }}>
+      <div style={{ paddingTop: 20, paddingBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.dim, marginBottom: 4 }}>Exercise</div>
+          <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>Library</div>
+        </div>
+        <button onClick={() => setAddOpen(true)} style={{
+          background: T.lime, border: 'none', color: '#000',
+          borderRadius: 12, padding: '9px 18px', fontSize: 14, fontWeight: 800,
+        }}>+ Add</button>
+      </div>
+
+      <input type="text" placeholder="Search exercises…" value={search} onChange={e => setSearch(e.target.value)}
+        style={{ width: '100%', background: T.card, border: `1.5px solid ${T.border}`, borderRadius: 12, color: T.white, padding: '11px 14px', fontSize: 15, marginBottom: 12 }} />
+
+      <div className="chip-row" style={{ marginBottom: 16 }}>
+        {['All', ...MUSCLE_GROUPS].map(g => (
+          <button key={g} onClick={() => setFilterGroup(g)} style={{
+            background: filterGroup === g ? T.lime : T.card, border: `1px solid ${filterGroup === g ? T.lime : T.border}`,
+            color: filterGroup === g ? '#000' : T.white, borderRadius: 20,
+            padding: '6px 14px', fontSize: 12, fontWeight: filterGroup === g ? 800 : 500, whiteSpace: 'nowrap', flexShrink: 0,
+          }}>{g}</button>
+        ))}
+      </div>
+
+      {Object.entries(grouped).map(([group, list]) => (
+        <div key={group} style={{ marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ width: 3, height: 14, borderRadius: 2, background: mgColor(group) }} />
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.dim }}>{group}</span>
+          </div>
+          {list.map(ex => {
+            const lw = getLastWeight(ex.id);
+            return (
+              <div key={ex.id} style={{
+                background: T.card, borderRadius: 12, padding: '13px 16px', marginBottom: 6,
+                border: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}>
+                <span style={{ fontSize: 15, fontWeight: 600 }}>{ex.name}</span>
+                {lw != null
+                  ? <span style={{ fontSize: 13, fontWeight: 700, color: T.dim }}>{fmt(lw)} kg</span>
+                  : <span style={{ fontSize: 12, color: T.muted }}>No data</span>
+                }
+              </div>
+            );
+          })}
+        </div>
+      ))}
+
+      {addOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 300, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+          <div style={{ background: T.card, borderRadius: '20px 20px 0 0', width: '100%', maxWidth: 480, padding: '20px 16px 32px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 14 }}>
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: T.border2 }} />
+            </div>
+            <div style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em', marginBottom: 20 }}>New Exercise</div>
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginBottom: 6 }}>Name</div>
+              <input type="text" value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. Cable Fly"
+                onKeyDown={e => e.key === 'Enter' && addExercise()}
+                style={{ width: '100%', background: T.card2, border: `1.5px solid ${T.border2}`, borderRadius: 12, color: T.white, padding: '13px 14px', fontSize: 16 }} />
+            </div>
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginBottom: 6 }}>Muscle Group</div>
+              <select value={newGroup} onChange={e => setNewGroup(e.target.value)} style={{
+                width: '100%', background: T.card2, border: `1.5px solid ${T.border2}`, borderRadius: 12,
+                color: T.white, padding: '13px 14px', fontSize: 16, appearance: 'none',
+              }}>
+                {MUSCLE_GROUPS.map(g => <option key={g}>{g}</option>)}
+              </select>
+            </div>
+            <LimeBtn onClick={addExercise}>Add Exercise</LimeBtn>
+            <div style={{ marginTop: 10 }}><GhostBtn onClick={() => setAddOpen(false)}>Cancel</GhostBtn></div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── SETTINGS VIEW ────────────────────────────────────────────────────────────
+
+function SettingsView({ exercises, program, logs, setExercises, setProgram, setLogs, setActiveWorkout }) {
+  const [lastBackup,   setLastBackup]   = useState(() => S.get('wa_last_backup', null));
+  const [importStatus, setImportStatus] = useState(null);
+  const [importMsg,    setImportMsg]    = useState('');
+  const [confirmReset, setConfirmReset] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const totalSets = useMemo(() =>
+    (logs||[]).reduce((sum,l) => sum + (l.exercises||[]).reduce((s,e) => s+(e.sets||[]).length, 0), 0),
+    [logs]
+  );
+
+  const handleExport = useCallback(() => {
+    const blob = new Blob([JSON.stringify({ version:2, exportedAt:new Date().toISOString(), exercises, program, logs }, null, 2)], { type:'application/json' });
+    const url  = URL.createObjectURL(blob);
+    const a    = Object.assign(document.createElement('a'), { href:url, download:`workout-backup-${new Date().toISOString().split('T')[0]}.json` });
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    const now = new Date().toISOString(); S.set('wa_last_backup', now); setLastBackup(now);
+  }, [exercises, program, logs]);
+
+  const handleFileChange = useCallback(e => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data.version || !Array.isArray(data.exercises)) throw new Error();
+        setExercises(data.exercises); setProgram(data.program||{}); setLogs(data.logs||[]); setActiveWorkout(null);
+        setImportStatus('success');
+        setImportMsg(`Restored ${(data.logs||[]).length} workouts · ${(data.exercises||[]).length} exercises · backed up ${fmtDate(data.exportedAt)}`);
+      } catch {
+        setImportStatus('error');
+        setImportMsg('That file doesn\'t look like a valid Reps backup.');
+      }
+    };
+    reader.readAsText(file); e.target.value = '';
+  }, [setExercises, setProgram, setLogs, setActiveWorkout]);
+
+  const handleReset = () => {
+    setExercises(SEED_EXERCISES); setProgram({}); setLogs([]); setActiveWorkout(null);
+    S.set('wa_last_backup', null); setLastBackup(null); setConfirmReset(false);
+  };
+
+  return (
+    <div style={{ padding: '0 16px' }}>
+      <Header left="Settings" sub="Reps" />
+
+      {/* Data summary */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 24 }}>
+        {[['Workouts', (logs||[]).length], ['Sets', totalSets], ['Exercises', (exercises||[]).length]].map(([label, value]) => (
+          <div key={label} style={{ background: T.card, borderRadius: 14, padding: '16px 10px', border: `1px solid ${T.border}`, textAlign: 'center' }}>
+            <div style={{ fontWeight: 800, fontSize: 24, letterSpacing: '-0.03em' }}>{value}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginTop: 4 }}>{label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Backup card */}
+      <div style={{ background: T.card, borderRadius: 18, border: `1px solid ${T.border}`, overflow: 'hidden', marginBottom: 16 }}>
+        <div style={{ padding: '18px 18px 14px', borderBottom: `1px solid ${T.border}` }}>
+          <div style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.02em', marginBottom: 4 }}>Backup & Restore</div>
+          <div style={{ color: T.dim, fontSize: 13, lineHeight: 1.5 }}>Export your data as a .json file. Import it on any device to restore everything.</div>
+        </div>
+        <div style={{ padding: '12px 18px', borderBottom: `1px solid ${T.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: T.dim }}>Last backup</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: lastBackup ? T.lime : '#FFD93D' }}>
+            {lastBackup ? fmtDate(lastBackup) : '⚠ Never'}
+          </span>
+        </div>
+        <div style={{ padding: '16px 18px', borderBottom: `1px solid ${T.border}` }}>
+          <LimeBtn onClick={handleExport} style={{ padding: '14px', fontSize: 15 }}>↓ Export Backup</LimeBtn>
+          <div style={{ color: T.dim, fontSize: 12, marginTop: 8, textAlign: 'center' }}>
+            workout-backup-{new Date().toISOString().split('T')[0]}.json
+          </div>
+        </div>
+        <div style={{ padding: '16px 18px' }}>
+          <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileChange} style={{ display: 'none' }} />
+          <GhostBtn onClick={() => { setImportStatus(null); fileInputRef.current?.click(); }} style={{ padding: '14px', fontSize: 15 }}>↑ Restore from Backup</GhostBtn>
+          <div style={{ color: T.dim, fontSize: 12, marginTop: 8, textAlign: 'center' }}>Replaces all current data</div>
+        </div>
+      </div>
+
+      {/* Import status */}
+      {importStatus && (
+        <div style={{
+          background: importStatus === 'success' ? T.limeDim : T.redDim,
+          border: `1px solid ${importStatus === 'success' ? 'rgba(200,255,0,0.3)' : 'rgba(255,59,48,0.3)'}`,
+          borderRadius: 14, padding: '14px 16px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'flex-start',
+        }}>
+          <div style={{ flexShrink: 0, marginTop: 1 }}>
+            {importStatus === 'success'
+              ? <Icon.CheckCircle size={20} color={T.lime} />
+              : <Icon.Warning size={20} color={T.red} />}
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 14, color: importStatus === 'success' ? T.lime : T.red, marginBottom: 3 }}>
+              {importStatus === 'success' ? 'Restore successful' : 'Restore failed'}
+            </div>
+            <div style={{ color: T.dim, fontSize: 13 }}>{importMsg}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Phone switch tip */}
+      <div style={{ background: T.limeDim, border: `1px solid rgba(200,255,0,0.2)`, borderRadius: 16, padding: '16px 18px', marginBottom: 24 }}>
+        <div style={{ fontWeight: 800, fontSize: 13, color: T.lime, letterSpacing: '-0.01em', marginBottom: 8 }}>Switching phones?</div>
+        <div style={{ color: T.dim, fontSize: 13, lineHeight: 1.7 }}>
+          1. Tap <strong style={{ color: T.white }}>Export Backup</strong> and save to iCloud / Google Drive.<br/>
+          2. Copy <strong style={{ color: T.white }}>workout.html</strong> to your new phone the same way.<br/>
+          3. Open it in Safari/Chrome → Settings → <strong style={{ color: T.white }}>Restore from Backup</strong>.
+        </div>
+      </div>
+
+      {/* Danger zone */}
+      <div style={{ background: T.card, borderRadius: 18, border: `1px solid rgba(255,59,48,0.2)`, overflow: 'hidden', marginBottom: 32 }}>
+        <div style={{ padding: '14px 18px', borderBottom: `1px solid rgba(255,59,48,0.15)` }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: T.red, letterSpacing: '-0.01em' }}>Danger Zone</div>
+        </div>
+        <div style={{ padding: '14px 18px' }}>
+          <button onClick={() => setConfirmReset(true)} style={{
+            width: '100%', background: T.redDim, border: `1px solid rgba(255,59,48,0.25)`,
+            color: T.red, borderRadius: 12, padding: '13px', fontSize: 14, fontWeight: 700,
+          }}>Reset All Data</button>
+        </div>
+      </div>
+
+      {confirmReset && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.94)', zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <div style={{ background: T.card, borderRadius: 24, padding: 28, width: '100%', maxWidth: 360, textAlign: 'center', border: `1px solid ${T.border}` }}>
+            <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.redDim, border: `1px solid rgba(255,59,48,0.25)`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <Icon.Trash size={28} color={T.red} />
+            </div>
+            <div style={{ fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', marginBottom: 8 }}>Reset everything?</div>
+            <div style={{ color: T.dim, fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>All workouts, program and custom exercises will be permanently deleted.</div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button onClick={() => setConfirmReset(false)} style={{ flex:1, background:T.card2, border:'none', color:T.white, borderRadius:12, padding:'14px', fontSize:15, fontWeight:600 }}>Cancel</button>
+              <button onClick={handleReset} style={{ flex:1, background:T.red, border:'none', color:T.white, borderRadius:12, padding:'14px', fontSize:15, fontWeight:800 }}>Reset</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── ROOT APP ─────────────────────────────────────────────────────────────────
+
+function App() {
+  const [tab,           setTab]           = useState('today');
+  const [exercises,     setExercises]     = useState(() => S.get('wa_exercises', SEED_EXERCISES));
+  const [program,       setProgram]       = useState(() => S.get('wa_program', SEED_PROGRAM));
+  const [logs,          setLogs]          = useState(() => S.get('wa_logs', SEED_LOGS));
+  const [activeWorkout, setActiveWorkout] = useState(() => S.get('wa_active', null));
+
+  useEffect(() => { S.set('wa_exercises', exercises); }, [exercises]);
+  useEffect(() => { S.set('wa_program',   program);   }, [program]);
+  useEffect(() => { S.set('wa_logs',      logs);      }, [logs]);
+  useEffect(() => { S.set('wa_active',    activeWorkout); }, [activeWorkout]);
+
+  const saveWorkout = useCallback(() => {
+    if (!activeWorkout) return;
+    setLogs(prev => [{ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], dayName: activeWorkout.dayName, exercises: activeWorkout.exercises }, ...prev]);
+    setActiveWorkout(null);
+  }, [activeWorkout]);
+
+  const props = { exercises, setExercises, program, setProgram, logs, setLogs, activeWorkout, setActiveWorkout, saveWorkout, setTab };
+
+  const TABS = [
+    { key:'today',    label:'Today',    Icon: Icon.Dumbbell },
+    { key:'program',  label:'Program',  Icon: Icon.Calendar  },
+    { key:'progress', label:'Progress', Icon: Icon.Chart     },
+    { key:'library',  label:'Library',  Icon: Icon.List      },
+    { key:'settings', label:'Settings', Icon: Icon.Settings  },
+  ];
+
+  return (
+    <div style={{ maxWidth: 480, margin: '0 auto', minHeight: '100vh', background: T.bg, paddingBottom: 80 }}>
+      {tab === 'today'    && <TodayView    {...props} />}
+      {tab === 'program'  && <ProgramView  {...props} />}
+      {tab === 'progress' && <ProgressView {...props} />}
+      {tab === 'library'  && <LibraryView  {...props} />}
+      {tab === 'settings' && <SettingsView {...props} />}
+
+      {/* Bottom nav */}
+      <nav style={{
+        position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)',
+        width: '100%', maxWidth: 480,
+        background: 'rgba(14,14,14,0.95)',
+        borderTop: `1px solid ${T.border}`,
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        display: 'flex', zIndex: 100,
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      }}>
+        {TABS.map(({ key, label, Icon: TabIcon }) => {
+          const active = tab === key;
+          return (
+            <button key={key} onClick={() => setTab(key)} style={{
+              flex: 1, padding: '11px 0 9px', background: 'none', border: 'none',
+              color: active ? T.lime : T.dim,
+              fontSize: 10, fontWeight: active ? 700 : 500, letterSpacing: '0.02em',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+              position: 'relative',
+            }}>
+              {key === 'today' && activeWorkout && (
+                <span style={{ position: 'absolute', top: 8, right: '26%', width: 6, height: 6, background: T.lime, borderRadius: '50%' }} />
+              )}
+              <TabIcon size={21} color={active ? T.lime : T.dim} />
+              {label}
+            </button>
+          );
+        })}
+      </nav>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

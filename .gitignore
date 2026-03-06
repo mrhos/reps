@@ -1,0 +1,16 @@
+# Design source files
+*.af
+REPS2.af
+
+# Backups
+workout-backup-*.html
+workout-backup-*.json
+
+# Reference images (jpeg clutter)
+*.jpeg
+
+# macOS
+.DS_Store
+
+# Claude internals
+.claude/

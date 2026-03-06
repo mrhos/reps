@@ -1,0 +1,2866 @@
+{
+  "version": 2,
+  "exportedAt": "2026-03-06T10:00:00.000Z",
+  "exercises": [
+    {
+      "id": "e1",
+      "name": "Bench Press",
+      "muscleGroup": "Chest"
+    },
+    {
+      "id": "e2",
+      "name": "Incline DB Press",
+      "muscleGroup": "Chest"
+    },
+    {
+      "id": "e3",
+      "name": "Cable Fly",
+      "muscleGroup": "Chest"
+    },
+    {
+      "id": "e4",
+      "name": "Push-ups",
+      "muscleGroup": "Chest"
+    },
+    {
+      "id": "e5",
+      "name": "Overhead Press",
+      "muscleGroup": "Shoulders"
+    },
+    {
+      "id": "e6",
+      "name": "Lateral Raises",
+      "muscleGroup": "Shoulders"
+    },
+    {
+      "id": "e7",
+      "name": "Front Raises",
+      "muscleGroup": "Shoulders"
+    },
+    {
+      "id": "e8",
+      "name": "Face Pulls",
+      "muscleGroup": "Shoulders"
+    },
+    {
+      "id": "e9",
+      "name": "Tricep Pushdown",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "e10",
+      "name": "Skull Crushers",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "e11",
+      "name": "Dips",
+      "muscleGroup": "Triceps"
+    },
+    {
+      "id": "e12",
+      "name": "Pull-ups",
+      "muscleGroup": "Back"
+    },
+    {
+      "id": "e13",
+      "name": "Barbell Row",
+      "muscleGroup": "Back"
+    },
+    {
+      "id": "e14",
+      "name": "Cable Row",
+      "muscleGroup": "Back"
+    },
+    {
+      "id": "e15",
+      "name": "Lat Pulldown",
+      "muscleGroup": "Back"
+    },
+    {
+      "id": "e16",
+      "name": "Deadlift",
+      "muscleGroup": "Back"
+    },
+    {
+      "id": "e17",
+      "name": "Bicep Curl",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "e18",
+      "name": "Hammer Curl",
+      "muscleGroup": "Biceps"
+    },
+    {
+      "id": "e19",
+      "name": "Squat",
+      "muscleGroup": "Quads"
+    },
+    {
+      "id": "e20",
+      "name": "Leg Press",
+      "muscleGroup": "Quads"
+    },
+    {
+      "id": "e21",
+      "name": "Lunges",
+      "muscleGroup": "Quads"
+    },
+    {
+      "id": "e22",
+      "name": "Romanian Deadlift",
+      "muscleGroup": "Hamstrings"
+    },
+    {
+      "id": "e23",
+      "name": "Leg Curl",
+      "muscleGroup": "Hamstrings"
+    },
+    {
+      "id": "e24",
+      "name": "Hip Thrust",
+      "muscleGroup": "Glutes"
+    },
+    {
+      "id": "e25",
+      "name": "Calf Raises",
+      "muscleGroup": "Calves"
+    },
+    {
+      "id": "e26",
+      "name": "Plank",
+      "muscleGroup": "Core"
+    },
+    {
+      "id": "e27",
+      "name": "Cable Crunch",
+      "muscleGroup": "Core"
+    }
+  ],
+  "program": {
+    "Monday": [
+      {
+        "exerciseId": "e1",
+        "targetSets": 4,
+        "targetReps": 8
+      },
+      {
+        "exerciseId": "e5",
+        "targetSets": 4,
+        "targetReps": 8
+      },
+      {
+        "exerciseId": "e9",
+        "targetSets": 3,
+        "targetReps": 12
+      },
+      {
+        "exerciseId": "e6",
+        "targetSets": 3,
+        "targetReps": 15
+      },
+      {
+        "exerciseId": "e3",
+        "targetSets": 3,
+        "targetReps": 12
+      }
+    ],
+    "Wednesday": [
+      {
+        "exerciseId": "e12",
+        "targetSets": 4,
+        "targetReps": 8
+      },
+      {
+        "exerciseId": "e13",
+        "targetSets": 4,
+        "targetReps": 8
+      },
+      {
+        "exerciseId": "e15",
+        "targetSets": 3,
+        "targetReps": 10
+      },
+      {
+        "exerciseId": "e17",
+        "targetSets": 3,
+        "targetReps": 12
+      },
+      {
+        "exerciseId": "e8",
+        "targetSets": 3,
+        "targetReps": 15
+      }
+    ],
+    "Friday": [
+      {
+        "exerciseId": "e19",
+        "targetSets": 4,
+        "targetReps": 6
+      },
+      {
+        "exerciseId": "e22",
+        "targetSets": 3,
+        "targetReps": 8
+      },
+      {
+        "exerciseId": "e20",
+        "targetSets": 3,
+        "targetReps": 10
+      },
+      {
+        "exerciseId": "e24",
+        "targetSets": 3,
+        "targetReps": 12
+      },
+      {
+        "exerciseId": "e25",
+        "targetSets": 4,
+        "targetReps": 15
+      }
+    ]
+  },
+  "logs": [
+    {
+      "id": "w7",
+      "date": "2026-03-04",
+      "dayName": "Wednesday",
+      "exercises": [
+        {
+          "exerciseId": "e12",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 9
+            },
+            {
+              "weight": 80,
+              "reps": 9
+            },
+            {
+              "weight": 80,
+              "reps": 9
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            }
+          ]
+        },
+        {
+          "exerciseId": "e13",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e15",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 67.5,
+              "reps": 10
+            },
+            {
+              "weight": 67.5,
+              "reps": 10
+            },
+            {
+              "weight": 67.5,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e17",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 18,
+              "reps": 12
+            },
+            {
+              "weight": 18,
+              "reps": 12
+            },
+            {
+              "weight": 18,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e8",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 22.5,
+              "reps": 15
+            },
+            {
+              "weight": 22.5,
+              "reps": 15
+            },
+            {
+              "weight": 22.5,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p7",
+      "date": "2026-03-02",
+      "dayName": "Monday",
+      "exercises": [
+        {
+          "exerciseId": "e1",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 90,
+              "reps": 8
+            },
+            {
+              "weight": 90,
+              "reps": 8
+            },
+            {
+              "weight": 90,
+              "reps": 8
+            },
+            {
+              "weight": 90,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e5",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 65,
+              "reps": 8
+            },
+            {
+              "weight": 65,
+              "reps": 8
+            },
+            {
+              "weight": 65,
+              "reps": 8
+            },
+            {
+              "weight": 65,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e9",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 12
+            },
+            {
+              "weight": 40,
+              "reps": 12
+            },
+            {
+              "weight": 40,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e6",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 12.5,
+              "reps": 15
+            },
+            {
+              "weight": 12.5,
+              "reps": 15
+            },
+            {
+              "weight": 12.5,
+              "reps": 14
+            }
+          ]
+        },
+        {
+          "exerciseId": "e3",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 22.5,
+              "reps": 12
+            },
+            {
+              "weight": 22.5,
+              "reps": 12
+            },
+            {
+              "weight": 22.5,
+              "reps": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l7",
+      "date": "2026-02-27",
+      "dayName": "Friday",
+      "exercises": [
+        {
+          "exerciseId": "e19",
+          "targetSets": 4,
+          "targetReps": 6,
+          "sets": [
+            {
+              "weight": 115,
+              "reps": 6
+            },
+            {
+              "weight": 115,
+              "reps": 6
+            },
+            {
+              "weight": 115,
+              "reps": 6
+            },
+            {
+              "weight": 115,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e22",
+          "targetSets": 3,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 95,
+              "reps": 8
+            },
+            {
+              "weight": 95,
+              "reps": 8
+            },
+            {
+              "weight": 95,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e20",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 165,
+              "reps": 10
+            },
+            {
+              "weight": 165,
+              "reps": 10
+            },
+            {
+              "weight": 165,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e24",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 105,
+              "reps": 12
+            },
+            {
+              "weight": 105,
+              "reps": 12
+            },
+            {
+              "weight": 105,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e25",
+          "targetSets": 4,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 15
+            },
+            {
+              "weight": 75,
+              "reps": 15
+            },
+            {
+              "weight": 75,
+              "reps": 15
+            },
+            {
+              "weight": 75,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w6",
+      "date": "2026-02-25",
+      "dayName": "Wednesday",
+      "exercises": [
+        {
+          "exerciseId": "e12",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 9
+            },
+            {
+              "weight": 80,
+              "reps": 9
+            },
+            {
+              "weight": 80,
+              "reps": 9
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            }
+          ]
+        },
+        {
+          "exerciseId": "e13",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 77.5,
+              "reps": 8
+            },
+            {
+              "weight": 77.5,
+              "reps": 8
+            },
+            {
+              "weight": 77.5,
+              "reps": 8
+            },
+            {
+              "weight": 77.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e15",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 65,
+              "reps": 10
+            },
+            {
+              "weight": 65,
+              "reps": 10
+            },
+            {
+              "weight": 65,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e17",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 18,
+              "reps": 12
+            },
+            {
+              "weight": 18,
+              "reps": 12
+            },
+            {
+              "weight": 18,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e8",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 22.5,
+              "reps": 15
+            },
+            {
+              "weight": 22.5,
+              "reps": 15
+            },
+            {
+              "weight": 22.5,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "date": "2026-02-23",
+      "dayName": "Monday",
+      "exercises": [
+        {
+          "exerciseId": "e1",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 87.5,
+              "reps": 8
+            },
+            {
+              "weight": 87.5,
+              "reps": 8
+            },
+            {
+              "weight": 87.5,
+              "reps": 8
+            },
+            {
+              "weight": 87.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e5",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 62.5,
+              "reps": 8
+            },
+            {
+              "weight": 62.5,
+              "reps": 8
+            },
+            {
+              "weight": 62.5,
+              "reps": 8
+            },
+            {
+              "weight": 62.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e9",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 37.5,
+              "reps": 12
+            },
+            {
+              "weight": 37.5,
+              "reps": 12
+            },
+            {
+              "weight": 37.5,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e6",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 12.5,
+              "reps": 15
+            },
+            {
+              "weight": 12.5,
+              "reps": 15
+            },
+            {
+              "weight": 12.5,
+              "reps": 14
+            }
+          ]
+        },
+        {
+          "exerciseId": "e3",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 22.5,
+              "reps": 12
+            },
+            {
+              "weight": 22.5,
+              "reps": 12
+            },
+            {
+              "weight": 22.5,
+              "reps": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l6",
+      "date": "2026-02-20",
+      "dayName": "Friday",
+      "exercises": [
+        {
+          "exerciseId": "e19",
+          "targetSets": 4,
+          "targetReps": 6,
+          "sets": [
+            {
+              "weight": 112.5,
+              "reps": 6
+            },
+            {
+              "weight": 112.5,
+              "reps": 6
+            },
+            {
+              "weight": 112.5,
+              "reps": 6
+            },
+            {
+              "weight": 112.5,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e22",
+          "targetSets": 3,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 92.5,
+              "reps": 8
+            },
+            {
+              "weight": 92.5,
+              "reps": 8
+            },
+            {
+              "weight": 92.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e20",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 160,
+              "reps": 10
+            },
+            {
+              "weight": 160,
+              "reps": 10
+            },
+            {
+              "weight": 160,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e24",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 100,
+              "reps": 12
+            },
+            {
+              "weight": 100,
+              "reps": 12
+            },
+            {
+              "weight": 100,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e25",
+          "targetSets": 4,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 72.5,
+              "reps": 15
+            },
+            {
+              "weight": 72.5,
+              "reps": 15
+            },
+            {
+              "weight": 72.5,
+              "reps": 15
+            },
+            {
+              "weight": 72.5,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w5",
+      "date": "2026-02-18",
+      "dayName": "Wednesday",
+      "exercises": [
+        {
+          "exerciseId": "e12",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e13",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 8
+            },
+            {
+              "weight": 75,
+              "reps": 8
+            },
+            {
+              "weight": 75,
+              "reps": 8
+            },
+            {
+              "weight": 75,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e15",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 65,
+              "reps": 10
+            },
+            {
+              "weight": 65,
+              "reps": 10
+            },
+            {
+              "weight": 65,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e17",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 16,
+              "reps": 12
+            },
+            {
+              "weight": 16,
+              "reps": 12
+            },
+            {
+              "weight": 16,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e8",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 22.5,
+              "reps": 15
+            },
+            {
+              "weight": 22.5,
+              "reps": 15
+            },
+            {
+              "weight": 22.5,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "date": "2026-02-16",
+      "dayName": "Monday",
+      "exercises": [
+        {
+          "exerciseId": "e1",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e5",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 8
+            },
+            {
+              "weight": 60,
+              "reps": 8
+            },
+            {
+              "weight": 60,
+              "reps": 8
+            },
+            {
+              "weight": 60,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e9",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 37.5,
+              "reps": 12
+            },
+            {
+              "weight": 37.5,
+              "reps": 12
+            },
+            {
+              "weight": 37.5,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e6",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 12,
+              "reps": 15
+            },
+            {
+              "weight": 12,
+              "reps": 15
+            },
+            {
+              "weight": 12,
+              "reps": 14
+            }
+          ]
+        },
+        {
+          "exerciseId": "e3",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 12
+            },
+            {
+              "weight": 20,
+              "reps": 12
+            },
+            {
+              "weight": 20,
+              "reps": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l5",
+      "date": "2026-02-13",
+      "dayName": "Friday",
+      "exercises": [
+        {
+          "exerciseId": "e19",
+          "targetSets": 4,
+          "targetReps": 6,
+          "sets": [
+            {
+              "weight": 110,
+              "reps": 6
+            },
+            {
+              "weight": 110,
+              "reps": 6
+            },
+            {
+              "weight": 110,
+              "reps": 6
+            },
+            {
+              "weight": 110,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e22",
+          "targetSets": 3,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 90,
+              "reps": 8
+            },
+            {
+              "weight": 90,
+              "reps": 8
+            },
+            {
+              "weight": 90,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e20",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 155,
+              "reps": 10
+            },
+            {
+              "weight": 155,
+              "reps": 10
+            },
+            {
+              "weight": 155,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e24",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 95,
+              "reps": 12
+            },
+            {
+              "weight": 95,
+              "reps": 12
+            },
+            {
+              "weight": 95,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e25",
+          "targetSets": 4,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 70,
+              "reps": 15
+            },
+            {
+              "weight": 70,
+              "reps": 15
+            },
+            {
+              "weight": 70,
+              "reps": 15
+            },
+            {
+              "weight": 70,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w4",
+      "date": "2026-02-11",
+      "dayName": "Wednesday",
+      "exercises": [
+        {
+          "exerciseId": "e12",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e13",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 75,
+              "reps": 8
+            },
+            {
+              "weight": 75,
+              "reps": 8
+            },
+            {
+              "weight": 75,
+              "reps": 8
+            },
+            {
+              "weight": 75,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e15",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 62.5,
+              "reps": 10
+            },
+            {
+              "weight": 62.5,
+              "reps": 10
+            },
+            {
+              "weight": 62.5,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e17",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 16,
+              "reps": 12
+            },
+            {
+              "weight": 16,
+              "reps": 12
+            },
+            {
+              "weight": 16,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e8",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 15
+            },
+            {
+              "weight": 20,
+              "reps": 15
+            },
+            {
+              "weight": 20,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "date": "2026-02-09",
+      "dayName": "Monday",
+      "exercises": [
+        {
+          "exerciseId": "e1",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e5",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 8
+            },
+            {
+              "weight": 60,
+              "reps": 8
+            },
+            {
+              "weight": 60,
+              "reps": 8
+            },
+            {
+              "weight": 60,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e9",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 12
+            },
+            {
+              "weight": 35,
+              "reps": 12
+            },
+            {
+              "weight": 35,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e6",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 12,
+              "reps": 15
+            },
+            {
+              "weight": 12,
+              "reps": 15
+            },
+            {
+              "weight": 12,
+              "reps": 14
+            }
+          ]
+        },
+        {
+          "exerciseId": "e3",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 12
+            },
+            {
+              "weight": 20,
+              "reps": 12
+            },
+            {
+              "weight": 20,
+              "reps": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l4",
+      "date": "2026-02-06",
+      "dayName": "Friday",
+      "exercises": [
+        {
+          "exerciseId": "e19",
+          "targetSets": 4,
+          "targetReps": 6,
+          "sets": [
+            {
+              "weight": 110,
+              "reps": 6
+            },
+            {
+              "weight": 110,
+              "reps": 6
+            },
+            {
+              "weight": 110,
+              "reps": 6
+            },
+            {
+              "weight": 110,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e22",
+          "targetSets": 3,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 87.5,
+              "reps": 8
+            },
+            {
+              "weight": 87.5,
+              "reps": 8
+            },
+            {
+              "weight": 87.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e20",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 150,
+              "reps": 10
+            },
+            {
+              "weight": 150,
+              "reps": 10
+            },
+            {
+              "weight": 150,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e24",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 90,
+              "reps": 12
+            },
+            {
+              "weight": 90,
+              "reps": 12
+            },
+            {
+              "weight": 90,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e25",
+          "targetSets": 4,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 70,
+              "reps": 15
+            },
+            {
+              "weight": 70,
+              "reps": 15
+            },
+            {
+              "weight": 70,
+              "reps": 15
+            },
+            {
+              "weight": 70,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "date": "2026-02-04",
+      "dayName": "Wednesday",
+      "exercises": [
+        {
+          "exerciseId": "e12",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 7
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            },
+            {
+              "weight": 80,
+              "reps": 6
+            }
+          ]
+        },
+        {
+          "exerciseId": "e13",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 72.5,
+              "reps": 8
+            },
+            {
+              "weight": 72.5,
+              "reps": 8
+            },
+            {
+              "weight": 72.5,
+              "reps": 8
+            },
+            {
+              "weight": 72.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e15",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 10
+            },
+            {
+              "weight": 60,
+              "reps": 10
+            },
+            {
+              "weight": 60,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e17",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 16,
+              "reps": 12
+            },
+            {
+              "weight": 16,
+              "reps": 12
+            },
+            {
+              "weight": 16,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e8",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 15
+            },
+            {
+              "weight": 20,
+              "reps": 15
+            },
+            {
+              "weight": 20,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "date": "2026-02-02",
+      "dayName": "Monday",
+      "exercises": [
+        {
+          "exerciseId": "e1",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 82.5,
+              "reps": 8
+            },
+            {
+              "weight": 82.5,
+              "reps": 8
+            },
+            {
+              "weight": 82.5,
+              "reps": 8
+            },
+            {
+              "weight": 82.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e5",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 57.5,
+              "reps": 8
+            },
+            {
+              "weight": 57.5,
+              "reps": 8
+            },
+            {
+              "weight": 57.5,
+              "reps": 8
+            },
+            {
+              "weight": 57.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e9",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 12
+            },
+            {
+              "weight": 35,
+              "reps": 12
+            },
+            {
+              "weight": 35,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e6",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 12,
+              "reps": 15
+            },
+            {
+              "weight": 12,
+              "reps": 15
+            },
+            {
+              "weight": 12,
+              "reps": 14
+            }
+          ]
+        },
+        {
+          "exerciseId": "e3",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 17.5,
+              "reps": 12
+            },
+            {
+              "weight": 17.5,
+              "reps": 12
+            },
+            {
+              "weight": 17.5,
+              "reps": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l3",
+      "date": "2026-01-30",
+      "dayName": "Friday",
+      "exercises": [
+        {
+          "exerciseId": "e19",
+          "targetSets": 4,
+          "targetReps": 6,
+          "sets": [
+            {
+              "weight": 105,
+              "reps": 6
+            },
+            {
+              "weight": 105,
+              "reps": 6
+            },
+            {
+              "weight": 105,
+              "reps": 6
+            },
+            {
+              "weight": 105,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e22",
+          "targetSets": 3,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e20",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 145,
+              "reps": 10
+            },
+            {
+              "weight": 145,
+              "reps": 10
+            },
+            {
+              "weight": 145,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e24",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 90,
+              "reps": 12
+            },
+            {
+              "weight": 90,
+              "reps": 12
+            },
+            {
+              "weight": 90,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e25",
+          "targetSets": 4,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 65,
+              "reps": 15
+            },
+            {
+              "weight": 65,
+              "reps": 15
+            },
+            {
+              "weight": 65,
+              "reps": 15
+            },
+            {
+              "weight": 65,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "date": "2026-01-28",
+      "dayName": "Wednesday",
+      "exercises": [
+        {
+          "exerciseId": "e12",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 7
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            },
+            {
+              "weight": 80,
+              "reps": 6
+            }
+          ]
+        },
+        {
+          "exerciseId": "e13",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 72.5,
+              "reps": 8
+            },
+            {
+              "weight": 72.5,
+              "reps": 8
+            },
+            {
+              "weight": 72.5,
+              "reps": 8
+            },
+            {
+              "weight": 72.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e15",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 10
+            },
+            {
+              "weight": 60,
+              "reps": 10
+            },
+            {
+              "weight": 60,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e17",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 14,
+              "reps": 12
+            },
+            {
+              "weight": 14,
+              "reps": 12
+            },
+            {
+              "weight": 14,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e8",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 15
+            },
+            {
+              "weight": 20,
+              "reps": 15
+            },
+            {
+              "weight": 20,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "date": "2026-01-26",
+      "dayName": "Monday",
+      "exercises": [
+        {
+          "exerciseId": "e1",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 82.5,
+              "reps": 8
+            },
+            {
+              "weight": 82.5,
+              "reps": 8
+            },
+            {
+              "weight": 82.5,
+              "reps": 8
+            },
+            {
+              "weight": 82.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e5",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 57.5,
+              "reps": 8
+            },
+            {
+              "weight": 57.5,
+              "reps": 8
+            },
+            {
+              "weight": 57.5,
+              "reps": 8
+            },
+            {
+              "weight": 57.5,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e9",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 32.5,
+              "reps": 12
+            },
+            {
+              "weight": 32.5,
+              "reps": 12
+            },
+            {
+              "weight": 32.5,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e6",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 10,
+              "reps": 15
+            },
+            {
+              "weight": 10,
+              "reps": 15
+            },
+            {
+              "weight": 10,
+              "reps": 14
+            }
+          ]
+        },
+        {
+          "exerciseId": "e3",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 17.5,
+              "reps": 12
+            },
+            {
+              "weight": 17.5,
+              "reps": 12
+            },
+            {
+              "weight": 17.5,
+              "reps": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l2",
+      "date": "2026-01-23",
+      "dayName": "Friday",
+      "exercises": [
+        {
+          "exerciseId": "e19",
+          "targetSets": 4,
+          "targetReps": 6,
+          "sets": [
+            {
+              "weight": 105,
+              "reps": 6
+            },
+            {
+              "weight": 105,
+              "reps": 6
+            },
+            {
+              "weight": 105,
+              "reps": 6
+            },
+            {
+              "weight": 105,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e22",
+          "targetSets": 3,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 8
+            },
+            {
+              "weight": 85,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e20",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 140,
+              "reps": 10
+            },
+            {
+              "weight": 140,
+              "reps": 10
+            },
+            {
+              "weight": 140,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e24",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 85,
+              "reps": 12
+            },
+            {
+              "weight": 85,
+              "reps": 12
+            },
+            {
+              "weight": 85,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e25",
+          "targetSets": 4,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 65,
+              "reps": 15
+            },
+            {
+              "weight": 65,
+              "reps": 15
+            },
+            {
+              "weight": 65,
+              "reps": 15
+            },
+            {
+              "weight": 65,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w1",
+      "date": "2026-01-21",
+      "dayName": "Wednesday",
+      "exercises": [
+        {
+          "exerciseId": "e12",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 6
+            },
+            {
+              "weight": 80,
+              "reps": 6
+            },
+            {
+              "weight": 80,
+              "reps": 6
+            },
+            {
+              "weight": 80,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e13",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 70,
+              "reps": 8
+            },
+            {
+              "weight": 70,
+              "reps": 8
+            },
+            {
+              "weight": 70,
+              "reps": 8
+            },
+            {
+              "weight": 70,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e15",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 57.5,
+              "reps": 10
+            },
+            {
+              "weight": 57.5,
+              "reps": 10
+            },
+            {
+              "weight": 57.5,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e17",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 14,
+              "reps": 12
+            },
+            {
+              "weight": 14,
+              "reps": 12
+            },
+            {
+              "weight": 14,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e8",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 17.5,
+              "reps": 15
+            },
+            {
+              "weight": 17.5,
+              "reps": 15
+            },
+            {
+              "weight": 17.5,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p1",
+      "date": "2026-01-19",
+      "dayName": "Monday",
+      "exercises": [
+        {
+          "exerciseId": "e1",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e5",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 55,
+              "reps": 8
+            },
+            {
+              "weight": 55,
+              "reps": 8
+            },
+            {
+              "weight": 55,
+              "reps": 8
+            },
+            {
+              "weight": 55,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e9",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 32.5,
+              "reps": 12
+            },
+            {
+              "weight": 32.5,
+              "reps": 12
+            },
+            {
+              "weight": 32.5,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e6",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 10,
+              "reps": 15
+            },
+            {
+              "weight": 10,
+              "reps": 15
+            },
+            {
+              "weight": 10,
+              "reps": 14
+            }
+          ]
+        },
+        {
+          "exerciseId": "e3",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 15,
+              "reps": 12
+            },
+            {
+              "weight": 15,
+              "reps": 12
+            },
+            {
+              "weight": 15,
+              "reps": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l1",
+      "date": "2026-01-16",
+      "dayName": "Friday",
+      "exercises": [
+        {
+          "exerciseId": "e19",
+          "targetSets": 4,
+          "targetReps": 6,
+          "sets": [
+            {
+              "weight": 100,
+              "reps": 6
+            },
+            {
+              "weight": 100,
+              "reps": 6
+            },
+            {
+              "weight": 100,
+              "reps": 6
+            },
+            {
+              "weight": 100,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e22",
+          "targetSets": 3,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e20",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 135,
+              "reps": 10
+            },
+            {
+              "weight": 135,
+              "reps": 10
+            },
+            {
+              "weight": 135,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e24",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 12
+            },
+            {
+              "weight": 80,
+              "reps": 12
+            },
+            {
+              "weight": 80,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e25",
+          "targetSets": 4,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 15
+            },
+            {
+              "weight": 60,
+              "reps": 15
+            },
+            {
+              "weight": 60,
+              "reps": 15
+            },
+            {
+              "weight": 60,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "w0",
+      "date": "2026-01-14",
+      "dayName": "Wednesday",
+      "exercises": [
+        {
+          "exerciseId": "e12",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 6
+            },
+            {
+              "weight": 80,
+              "reps": 6
+            },
+            {
+              "weight": 80,
+              "reps": 6
+            },
+            {
+              "weight": 80,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e13",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 70,
+              "reps": 8
+            },
+            {
+              "weight": 70,
+              "reps": 8
+            },
+            {
+              "weight": 70,
+              "reps": 8
+            },
+            {
+              "weight": 70,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e15",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 55,
+              "reps": 10
+            },
+            {
+              "weight": 55,
+              "reps": 10
+            },
+            {
+              "weight": 55,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e17",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 14,
+              "reps": 12
+            },
+            {
+              "weight": 14,
+              "reps": 12
+            },
+            {
+              "weight": 14,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e8",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 17.5,
+              "reps": 15
+            },
+            {
+              "weight": 17.5,
+              "reps": 15
+            },
+            {
+              "weight": 17.5,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p0",
+      "date": "2026-01-12",
+      "dayName": "Monday",
+      "exercises": [
+        {
+          "exerciseId": "e1",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e5",
+          "targetSets": 4,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 55,
+              "reps": 8
+            },
+            {
+              "weight": 55,
+              "reps": 8
+            },
+            {
+              "weight": 55,
+              "reps": 8
+            },
+            {
+              "weight": 55,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e9",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 30,
+              "reps": 12
+            },
+            {
+              "weight": 30,
+              "reps": 12
+            },
+            {
+              "weight": 30,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e6",
+          "targetSets": 3,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 10,
+              "reps": 15
+            },
+            {
+              "weight": 10,
+              "reps": 15
+            },
+            {
+              "weight": 10,
+              "reps": 14
+            }
+          ]
+        },
+        {
+          "exerciseId": "e3",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 15,
+              "reps": 12
+            },
+            {
+              "weight": 15,
+              "reps": 12
+            },
+            {
+              "weight": 15,
+              "reps": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l0",
+      "date": "2026-01-09",
+      "dayName": "Friday",
+      "exercises": [
+        {
+          "exerciseId": "e19",
+          "targetSets": 4,
+          "targetReps": 6,
+          "sets": [
+            {
+              "weight": 100,
+              "reps": 6
+            },
+            {
+              "weight": 100,
+              "reps": 6
+            },
+            {
+              "weight": 100,
+              "reps": 6
+            },
+            {
+              "weight": 100,
+              "reps": 5
+            }
+          ]
+        },
+        {
+          "exerciseId": "e22",
+          "targetSets": 3,
+          "targetReps": 8,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 8
+            },
+            {
+              "weight": 80,
+              "reps": 7
+            }
+          ]
+        },
+        {
+          "exerciseId": "e20",
+          "targetSets": 3,
+          "targetReps": 10,
+          "sets": [
+            {
+              "weight": 130,
+              "reps": 10
+            },
+            {
+              "weight": 130,
+              "reps": 10
+            },
+            {
+              "weight": 130,
+              "reps": 9
+            }
+          ]
+        },
+        {
+          "exerciseId": "e24",
+          "targetSets": 3,
+          "targetReps": 12,
+          "sets": [
+            {
+              "weight": 80,
+              "reps": 12
+            },
+            {
+              "weight": 80,
+              "reps": 12
+            },
+            {
+              "weight": 80,
+              "reps": 11
+            }
+          ]
+        },
+        {
+          "exerciseId": "e25",
+          "targetSets": 4,
+          "targetReps": 15,
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 15
+            },
+            {
+              "weight": 60,
+              "reps": 15
+            },
+            {
+              "weight": 60,
+              "reps": 15
+            },
+            {
+              "weight": 60,
+              "reps": 14
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
