@@ -399,6 +399,24 @@ function Wordmark() {
   );
 }
 
+// Theme toggle button — inline (scrolls with page)
+function ThemeToggle({ theme, setTheme }) {
+  return (
+    <button
+      onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+      style={{
+        width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+        background: T.card2, border: `1px solid ${T.border}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}
+    >
+      {theme === 'dark'
+        ? <Icon.Sun  size={16} color={T.dim} />
+        : <Icon.Moon size={16} color={T.dim} />}
+    </button>
+  );
+}
+
 // Set dot indicators  ●●●○
 function SetDots({ done, total, size=9 }) {
   return (
@@ -886,7 +904,7 @@ function WorkoutTimer({ startTime }) {
 
 // ─── TODAY VIEW ───────────────────────────────────────────────────────────────
 
-function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, saveWorkout, setTab }) {
+function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, saveWorkout, setTab, theme, setTheme }) {
   const today      = todayName();
   const todayIso   = new Date().toISOString().split('T')[0];
   const todayProg  = program[today] || [];
@@ -922,7 +940,7 @@ function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, 
   if (todayProg.length === 0 && !activeWorkout) {
     return (
       <div style={{ padding: '0 16px' }}>
-        <Header left={today} sub="Today" />
+        <Header left={today} sub="Today" right={<ThemeToggle theme={theme} setTheme={setTheme} />} />
         <DayStrip program={program} />
         <BackupNudge onGoToSettings={() => setTab('settings')} />
         <div style={{ background: T.card, borderRadius: 20, padding: '32px 24px', textAlign: 'center', border: `1px solid ${T.border}` }}>
@@ -1029,12 +1047,15 @@ function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, 
             <Wordmark />
             <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginTop: 10 }}>{today}</div>
           </div>
-          {lastLog && (
-            <div style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 10, padding: '6px 12px', textAlign: 'right' }}>
-              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim }}>Last session</div>
-              <div style={{ fontSize: 13, fontWeight: 700, marginTop: 1 }}>{fmtDate(lastLog.date)}</div>
-            </div>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 2 }}>
+            {lastLog && (
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim }}>Last session</div>
+                <div style={{ fontSize: 13, fontWeight: 700, marginTop: 1 }}>{fmtDate(lastLog.date)}</div>
+              </div>
+            )}
+            <ThemeToggle theme={theme} setTheme={setTheme} />
+          </div>
         </div>
 
         <DayStrip program={program} />
@@ -1146,7 +1167,7 @@ function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, 
 
 // ─── PROGRAM VIEW ─────────────────────────────────────────────────────────────
 
-function ProgramView({ exercises, program, setProgram }) {
+function ProgramView({ exercises, program, setProgram, theme, setTheme }) {
   const [selectedDay, setSelectedDay] = useState(null);
   const [addOpen,     setAddOpen]     = useState(false);
   const [newSets,     setNewSets]     = useState('4');
@@ -1176,7 +1197,7 @@ function ProgramView({ exercises, program, setProgram }) {
   if (!selectedDay) {
     return (
       <div style={{ padding: '0 16px' }}>
-        <Header left="Program" sub="Weekly Split" />
+        <Header left="Program" sub="Weekly Split" right={<ThemeToggle theme={theme} setTheme={setTheme} />} />
         {DAYS.map(day => {
           const prog    = program[day] || [];
           const isToday = day === today;
@@ -1352,7 +1373,7 @@ function ProgramView({ exercises, program, setProgram }) {
 
 // ─── PROGRESS VIEW ────────────────────────────────────────────────────────────
 
-function ProgressView({ exercises, logs, setLogs }) {
+function ProgressView({ exercises, logs, setLogs, theme, setTheme }) {
   // ── Charts state ──
   const loggedIds = useMemo(() => {
     const ids = new Set();
@@ -1439,7 +1460,7 @@ function ProgressView({ exercises, logs, setLogs }) {
   if ((logs || []).length === 0) {
     return (
       <div style={{ padding: '0 16px' }}>
-        <Header left="Progress" sub="Stats" />
+        <Header left="Progress" sub="Stats" right={<ThemeToggle theme={theme} setTheme={setTheme} />} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 48, gap: 16 }}>
           <svg width="120" height="96" viewBox="0 0 120 96" fill="none">
             <line x1="16" y1="12" x2="16" y2="76" stroke={T.border2} strokeWidth="2" strokeLinecap="round"/>
@@ -1622,7 +1643,7 @@ function ProgressView({ exercises, logs, setLogs }) {
   // ── Main view ──
   return (
     <div style={{ padding: '0 16px' }}>
-      <Header left="Progress" sub="Stats" />
+      <Header left="Progress" sub="Stats" right={<ThemeToggle theme={theme} setTheme={setTheme} />} />
 
       {/* Charts / History toggle */}
       <div style={{ display: 'flex', background: T.card, borderRadius: 12, padding: 4, marginBottom: 16, border: `1px solid ${T.border}` }}>
@@ -1760,7 +1781,7 @@ function ProgressView({ exercises, logs, setLogs }) {
 
 // ─── LIBRARY VIEW ─────────────────────────────────────────────────────────────
 
-function LibraryView({ exercises, setExercises, logs }) {
+function LibraryView({ exercises, setExercises, logs, theme, setTheme }) {
   const [addOpen,     setAddOpen]     = useState(false);
   const [newName,     setNewName]     = useState('');
   const [newGroup,    setNewGroup]    = useState('Chest');
@@ -1799,10 +1820,13 @@ function LibraryView({ exercises, setExercises, logs }) {
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: T.dim, marginBottom: 4 }}>Exercise</div>
           <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>Library</div>
         </div>
-        <button onClick={() => setAddOpen(true)} style={{
-          background: T.lime, border: 'none', color: '#000',
-          borderRadius: 12, padding: '9px 18px', fontSize: 14, fontWeight: 800,
-        }}>+ Add</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button onClick={() => setAddOpen(true)} style={{
+            background: T.lime, border: 'none', color: '#000',
+            borderRadius: 12, padding: '9px 18px', fontSize: 14, fontWeight: 800,
+          }}>+ Add</button>
+          <ThemeToggle theme={theme} setTheme={setTheme} />
+        </div>
       </div>
 
       <input type="text" placeholder="Search exercises…" value={search} onChange={e => setSearch(e.target.value)}
@@ -1875,7 +1899,7 @@ function LibraryView({ exercises, setExercises, logs }) {
 
 // ─── SETTINGS VIEW ────────────────────────────────────────────────────────────
 
-function SettingsView({ exercises, program, logs, setExercises, setProgram, setLogs, setActiveWorkout }) {
+function SettingsView({ exercises, program, logs, setExercises, setProgram, setLogs, setActiveWorkout, theme, setTheme }) {
   const [lastBackup,   setLastBackup]   = useState(() => S.get('wa_last_backup', null));
   const [importStatus, setImportStatus] = useState(null);
   const [importMsg,    setImportMsg]    = useState('');
@@ -1920,7 +1944,7 @@ function SettingsView({ exercises, program, logs, setExercises, setProgram, setL
 
   return (
     <div style={{ padding: '0 16px' }}>
-      <Header left="Settings" sub="Reps" />
+      <Header left="Settings" sub="Reps" right={<ThemeToggle theme={theme} setTheme={setTheme} />} />
 
       {/* Data summary */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 24 }}>
@@ -2056,7 +2080,7 @@ function App() {
     setActiveWorkout(null);
   }, [activeWorkout]);
 
-  const props = { exercises, setExercises, program, setProgram, logs, setLogs, activeWorkout, setActiveWorkout, saveWorkout, setTab };
+  const props = { exercises, setExercises, program, setProgram, logs, setLogs, activeWorkout, setActiveWorkout, saveWorkout, setTab, theme, setTheme };
 
   const TABS = [
     { key:'today',    label:'Today',    Icon: Icon.Dumbbell },
@@ -2073,26 +2097,6 @@ function App() {
       {tab === 'progress' && <ProgressView {...props} />}
       {tab === 'library'  && <LibraryView  {...props} />}
       {tab === 'settings' && <SettingsView {...props} />}
-
-      {/* Theme toggle — fixed top-right */}
-      <button
-        onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-        style={{
-          position: 'fixed',
-          top: 'calc(env(safe-area-inset-top, 0px) + 14px)',
-          right: 16,
-          width: 34, height: 34,
-          borderRadius: '50%',
-          background: T.card2,
-          border: `1px solid ${T.border}`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 200,
-        }}
-      >
-        {theme === 'dark'
-          ? <Icon.Sun  size={16} color={T.dim} />
-          : <Icon.Moon size={16} color={T.dim} />}
-      </button>
 
       {/* Bottom nav */}
       <nav style={{
