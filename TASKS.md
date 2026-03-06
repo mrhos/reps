@@ -6,7 +6,7 @@ Tasks are grouped by theme. Move to **Done** when shipped.
 
 ## 🏋️ Logging & Workout UX
 
-- [ ] **Workout duration timer** — show elapsed time during active workout; save duration to log
+- [x] **Workout duration timer** — show elapsed time during active workout; save duration to log
 - [ ] **Per-exercise notes** — small text field on ExerciseCard to jot form cues or how it felt
 - [ ] **Bodyweight exercise flag** — mark exercise as bodyweight in Library; auto-fill athlete's BW as weight, show reps-only in logging UI
 - [ ] **Superset support** — link two exercises to log them back-to-back with shared rest timer
@@ -37,11 +37,11 @@ Tasks are grouped by theme. Move to **Done** when shipped.
 
 ## 🎨 Design & Polish
 
-- [ ] **Haptic feedback** — light vibration on set logged (mobile web `navigator.vibrate`)
+- [x] **Haptic feedback** — light vibration on set logged (mobile web `navigator.vibrate`)
 - [ ] **Animated set dots** — small pop/scale animation when a set dot fills in
 - [ ] **Swipe to delete set** — swipe gesture on a logged set row to remove it
 - [ ] **Loading/transition states** — subtle fade between tabs
-- [ ] **Empty state illustrations** — SVG spot illustrations for Library empty state, first-time Program setup
+- [x] **Empty state illustrations** — SVG spot illustrations for Library empty state, first-time Program setup
 
 ---
 

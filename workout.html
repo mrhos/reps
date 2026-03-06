@@ -228,6 +228,16 @@ function calcVolume(sets) {
   return (sets || []).reduce((s, x) => s + (Number(x.weight) || 0) * (Number(x.reps) || 0), 0);
 }
 
+function fmtDuration(secs) {
+  if (!secs) return null;
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
+const haptic = (ms = 30) => { try { navigator.vibrate?.(ms); } catch(e) {} };
+
 function getSuggestion(exerciseId, targetReps, logs) {
   const relevant = (logs || [])
     .filter(l => l.exercises?.some(e => e.exerciseId === exerciseId))
@@ -566,6 +576,7 @@ function ExerciseCard({ wex, exercise, logs, onLogSet, onSwap, isExpanded, onTog
   const handleLog = () => {
     if (!weight || !reps) return;
     onLogSet(parseFloat(weight), parseInt(reps));
+    haptic(30);
     setReps('');
     setFlash(true);
     setTimeout(() => setFlash(false), 400);
@@ -802,6 +813,26 @@ function BackupNudge({ onGoToSettings }) {
   );
 }
 
+// ─── WORKOUT TIMER ────────────────────────────────────────────────────────────
+
+function WorkoutTimer({ startTime }) {
+  const [elapsed, setElapsed] = useState(() => Math.floor((Date.now() - new Date(startTime).getTime()) / 1000));
+  useEffect(() => {
+    const start = new Date(startTime).getTime();
+    const id = setInterval(() => setElapsed(Math.floor((Date.now() - start) / 1000)), 1000);
+    return () => clearInterval(id);
+  }, [startTime]);
+  const h = Math.floor(elapsed / 3600);
+  const m = Math.floor((elapsed % 3600) / 60);
+  const s = elapsed % 60;
+  const pad = n => String(n).padStart(2, '0');
+  return (
+    <span style={{ fontSize: 12, fontWeight: 700, color: T.dim, letterSpacing: '0.06em', fontVariantNumeric: 'tabular-nums' }}>
+      {h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`}
+    </span>
+  );
+}
+
 // ─── TODAY VIEW ───────────────────────────────────────────────────────────────
 
 function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, saveWorkout, setTab }) {
@@ -881,18 +912,25 @@ function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, 
         </div>
 
         {/* Stats row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
-          {[
+        {(() => {
+          const stats = [
             { label: 'Exercises', value: todayLog.exercises?.length || 0 },
             { label: 'Sets',      value: totalSets },
             { label: 'Volume',    value: totalVol >= 1000 ? `${(totalVol/1000).toFixed(1)}t` : `${totalVol}kg` },
-          ].map(({ label, value }) => (
-            <div key={label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: '14px 10px', textAlign: 'center' }}>
-              <div style={{ fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', color: T.white }}>{value}</div>
-              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginTop: 3 }}>{label}</div>
+          ];
+          if (todayLog.duration) stats.push({ label: 'Time', value: fmtDuration(todayLog.duration) });
+          const cols = stats.length === 4 ? '1fr 1fr' : '1fr 1fr 1fr';
+          return (
+            <div style={{ display: 'grid', gridTemplateColumns: cols, gap: 8, marginBottom: 16 }}>
+              {stats.map(({ label, value }) => (
+                <div key={label} style={{ background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: '14px 10px', textAlign: 'center' }}>
+                  <div style={{ fontWeight: 800, fontSize: 22, letterSpacing: '-0.03em', color: T.white }}>{value}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginTop: 3 }}>{label}</div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          );
+        })()}
 
         {/* Exercise summary */}
         <div style={{ marginBottom: 16 }}>
@@ -995,6 +1033,7 @@ function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: T.lime, display: 'inline-block' }} />
             <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.04em', color: T.lime }}>In Progress · {today}</span>
+            {activeWorkout.startTime && <WorkoutTimer startTime={activeWorkout.startTime} />}
           </div>
         </div>
         <RingProgress done={setsCompleted} total={totalExercises} size={64} />
@@ -1132,7 +1171,21 @@ function ProgramView({ exercises, program, setProgram }) {
       </div>
 
       {dayProg.length === 0 && (
-        <div style={{ color: T.dim, fontSize: 14, textAlign: 'center', padding: '24px 0 8px' }}>No exercises yet</div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '32px 0 24px' }}>
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+            {/* Calendar body */}
+            <rect x="8" y="16" width="56" height="48" rx="8" stroke={T.border2} strokeWidth="2" fill={T.card}/>
+            <line x1="8" y1="28" x2="64" y2="28" stroke={T.border2} strokeWidth="2"/>
+            {/* Calendar binding dots */}
+            <line x1="24" y1="10" x2="24" y2="22" stroke={T.muted} strokeWidth="2.5" strokeLinecap="round"/>
+            <line x1="48" y1="10" x2="48" y2="22" stroke={T.muted} strokeWidth="2.5" strokeLinecap="round"/>
+            {/* + icon in centre */}
+            <line x1="36" y1="42" x2="36" y2="54" stroke={T.lime} strokeWidth="2.5" strokeLinecap="round"/>
+            <line x1="30" y1="48" x2="42" y2="48" stroke={T.lime} strokeWidth="2.5" strokeLinecap="round"/>
+          </svg>
+          <div style={{ fontWeight: 700, fontSize: 15, color: T.dim }}>No exercises added yet</div>
+          <div style={{ color: T.muted, fontSize: 13, textAlign: 'center', maxWidth: 200, lineHeight: 1.5 }}>Tap the button below to build your {selectedDay} workout.</div>
+        </div>
       )}
 
       {dayProg.map((pe, i) => {
@@ -1201,7 +1254,25 @@ function ProgramView({ exercises, program, setProgram }) {
               ))}
             </div>
             <div style={{ overflowY: 'auto', flex: 1, padding: '0 16px' }}>
-              {filteredEx.length === 0 && <div style={{ color: T.dim, textAlign: 'center', padding: '24px 0', fontSize: 14 }}>No exercises found</div>}
+              {filteredEx.length === 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: '28px 0' }}>
+                  <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                    {/* Dumbbell */}
+                    <rect x="4" y="22" width="6" height="12" rx="2" stroke={T.muted} strokeWidth="1.75" fill="none"/>
+                    <rect x="46" y="22" width="6" height="12" rx="2" stroke={T.muted} strokeWidth="1.75" fill="none"/>
+                    <rect x="10" y="20" width="5" height="16" rx="1.5" stroke={T.muted} strokeWidth="1.75" fill="none"/>
+                    <rect x="41" y="20" width="5" height="16" rx="1.5" stroke={T.muted} strokeWidth="1.75" fill="none"/>
+                    <line x1="15" y1="28" x2="41" y2="28" stroke={T.muted} strokeWidth="1.75" strokeLinecap="round"/>
+                    {/* Search circle */}
+                    <circle cx="42" cy="42" r="8" stroke={T.border2} strokeWidth="1.75" fill={T.card}/>
+                    <line x1="48" y1="48" x2="53" y2="53" stroke={T.border2} strokeWidth="2" strokeLinecap="round"/>
+                    {/* X inside search */}
+                    <line x1="39" y1="39" x2="45" y2="45" stroke={T.dim} strokeWidth="1.5" strokeLinecap="round"/>
+                    <line x1="45" y1="39" x2="39" y2="45" stroke={T.dim} strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  <div style={{ color: T.dim, fontSize: 14, fontWeight: 600 }}>No exercises found</div>
+                </div>
+              )}
               {filteredEx.map(ex => (
                 <button key={ex.id} onClick={() => addExercise(ex.id)} style={{
                   width: '100%', background: T.card2, border: `1px solid ${T.border}`,
@@ -1273,12 +1344,29 @@ function ProgressView({ exercises, logs }) {
     return (
       <div style={{ padding: '0 16px' }}>
         <Header left="Progress" sub="Stats" />
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 60, gap: 12 }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', background: T.card, border: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon.Chart size={28} color={T.dim} />
-          </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 48, gap: 16 }}>
+          <svg width="120" height="96" viewBox="0 0 120 96" fill="none">
+            {/* Axes */}
+            <line x1="16" y1="12" x2="16" y2="76" stroke={T.border2} strokeWidth="2" strokeLinecap="round"/>
+            <line x1="16" y1="76" x2="108" y2="76" stroke={T.border2} strokeWidth="2" strokeLinecap="round"/>
+            {/* Y-axis ticks */}
+            {[20,40,60].map(y => (
+              <line key={y} x1="12" y1={76-y} x2="108" y2={76-y} stroke={T.border} strokeWidth="1" strokeDasharray="3 4"/>
+            ))}
+            {/* Dashed trend line going up */}
+            <polyline points="26,68 45,56 62,46 80,34 98,20" fill="none" stroke={T.muted} strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" strokeLinejoin="round"/>
+            {/* Ghost dots on the trend */}
+            {[[26,68],[45,56],[62,46],[80,34]].map(([x,y],i) => (
+              <circle key={i} cx={x} cy={y} r="3.5" fill={T.muted}/>
+            ))}
+            {/* Lime dot at the end — your next session */}
+            <circle cx="98" cy="20" r="5" fill={T.lime} opacity="0.35"/>
+            <circle cx="98" cy="20" r="3" fill={T.lime}/>
+            {/* Arrow hinting upward */}
+            <path d="M98 12 L98 4 M94 8 L98 4 L102 8" stroke={T.lime} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+          </svg>
           <div style={{ fontWeight: 800, fontSize: 20, letterSpacing: '-0.02em' }}>No data yet</div>
-          <div style={{ color: T.dim, fontSize: 14, textAlign: 'center', maxWidth: 260 }}>Finish your first workout to start tracking progression.</div>
+          <div style={{ color: T.dim, fontSize: 14, textAlign: 'center', maxWidth: 220, lineHeight: 1.6 }}>Complete your first workout to start seeing your progress charts.</div>
         </div>
       </div>
     );
@@ -1648,7 +1736,10 @@ function App() {
 
   const saveWorkout = useCallback(() => {
     if (!activeWorkout) return;
-    setLogs(prev => [{ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], dayName: activeWorkout.dayName, exercises: activeWorkout.exercises }, ...prev]);
+    const duration = activeWorkout.startTime
+      ? Math.floor((Date.now() - new Date(activeWorkout.startTime).getTime()) / 1000)
+      : null;
+    setLogs(prev => [{ id: Date.now().toString(), date: new Date().toISOString().split('T')[0], dayName: activeWorkout.dayName, duration, exercises: activeWorkout.exercises }, ...prev]);
     setActiveWorkout(null);
   }, [activeWorkout]);
 
