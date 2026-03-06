@@ -940,7 +940,21 @@ function TodayView({ exercises, program, logs, activeWorkout, setActiveWorkout, 
   if (todayProg.length === 0 && !activeWorkout) {
     return (
       <div style={{ padding: '0 16px' }}>
-        <Header left={today} sub="Today" right={<ThemeToggle theme={theme} setTheme={setTheme} />} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingTop: 20, paddingBottom: 20 }}>
+          <div>
+            <Wordmark />
+            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim, marginTop: 10 }}>{today}</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 2 }}>
+            {lastLog && (
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', color: T.dim }}>Last session</div>
+                <div style={{ fontSize: 13, fontWeight: 700, marginTop: 1 }}>{fmtDate(lastLog.date)}</div>
+              </div>
+            )}
+            <ThemeToggle theme={theme} setTheme={setTheme} />
+          </div>
+        </div>
         <DayStrip program={program} />
         <BackupNudge onGoToSettings={() => setTab('settings')} />
         <div style={{ background: T.card, borderRadius: 20, padding: '32px 24px', textAlign: 'center', border: `1px solid ${T.border}` }}>
