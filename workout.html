@@ -579,7 +579,7 @@ function ExerciseCard({ wex, exercise, logs, onLogSet, onSwap, isExpanded, onTog
     if (!weight || !reps) return;
     onLogSet(parseFloat(weight), parseInt(reps));
     haptic(30);
-    setReps('');
+    setReps(String(wex.targetReps || ''));
     setFlash(true);
     setTimeout(() => setFlash(false), 400);
   };
