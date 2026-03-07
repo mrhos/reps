@@ -14,3 +14,22 @@ workout-backup-*.json
 
 # Claude internals
 .claude/
+
+# Dev/design notes (local only)
+CLAUDE.md
+TASKS.md
+reps-colors.md
+reps-mock-data.json
+memory/
+
+# Design source SVGs (app uses inline SVG)
+REPS.svg
+REPS©.svg
+Pearl Bush to Nomad.svg
+Persian Blue to Cloud.svg
+Rum Swizzle to Riptide.svg
+
+# Reference images
+*.webp
+1_zastavka_*.png
+original-*.png
